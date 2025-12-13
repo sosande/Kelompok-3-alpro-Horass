@@ -8,6 +8,74 @@
 extern Penduduk dataWarga[MAX_WARGA];
 extern int jumlahWarga;
 
+void tambahWarga() {
+    // TODO: Tugas 
+    // 1. Cek apakah database penuh?
+    // 2. Input NIK, Nama, dll.
+    // 3. Validasi NIK (panggil fungsi cekNIKTerdaftar)
+    // 4. Simpan ke array dataWarga
+    
+    printf("\n[DEV] Fitur Tambah Warga belum diisi logikanya.\n");
+    jedaLayar();
+}
+
+void lihatDaftarWarga() {
+    // TODO: Tugas
+    // 1. Loop dari 0 sampai jumlahWarga
+    // 2. Printf data dalam bentuk tabel rapi
+    
+    printf("\n[DEV] Fitur Lihat Daftar belum diisi logikanya.\n");
+    jedaLayar();
+}
+
+void detailWarga(char* nik) {
+    // TODO: Tugas
+    // 1. Cari index warga berdasarkan NIK
+    // 2. Kalau ketemu, print semua data (TTL, Agama, Status, dll)
+    // 3. Kalau tidak ketemu, print Error
+}
+
+void cariWarga() {
+    // TODO: Tugas
+    // 1. Minta input NIK atau Nama
+    // 2. Panggil fungsi detailWarga() jika ketemu
+    
+    printf("\n[DEV] Fitur Cari Warga belum diisi logikanya.\n");
+    jedaLayar();
+}
+
+void editWarga() {
+    // TODO: Tugas
+    // 1. Minta input NIK yang mau diedit
+    // 2. Cari index-nya
+    // 3. Tawarkan mau edit kolom apa (Nama/Alamat/Status)
+    // 4. Update data di array
+    
+    printf("\n[DEV] Fitur Edit Warga belum diisi logikanya.\n");
+    jedaLayar();
+}
+
+void hapusWarga() {
+    // TODO: Tugas 
+    // 1. Minta input NIK
+    // 2. Konfirmasi (Yakin hapus?)
+    // 3. Geser array (data ke-i ditimpa data ke-i+1)
+    // 4. Kurangi jumlahWarga
+    
+    printf("\n[DEV] Fitur Hapus Warga belum diisi logikanya.\n");
+    jedaLayar();
+}
+
+int cekNIKTerdaftar(char* nikCek) {
+    // untuk mengecek apakah nik sudah terdaftar atau belum
+    for (int i = 0; i < jumlahWarga; i++) {
+        if (strcmp(dataWarga[i].nik, nikCek) == 0) {
+            return 1; // Ada
+        }
+    }
+    return 0; // Tidak ada
+}
+
 void menuDataWarga() {
   int pilihan;
 
@@ -17,37 +85,23 @@ void menuDataWarga() {
     printf("=== MENU KELOLA DATA WARGA ===\n");
     printf("[1] Tambah Warga Baru\n");
     printf("[2] Lihat Daftar Warga\n");
-    printf("[3] Edit Data Warga\n");   
-    printf("[4] Hapus Warga\n");      
-    printf("[0] Kembali ke Menu Utama\n");
+    printf("[3] Cari & Detail Warga\n");
+    printf("[4] Edit Data Warga\n");
+    printf("[5] Hapus Warga\n");
+    printf("[0] Kembali ke Menu Utama\n");   
     printf("------------------------------\n");
     printf("Pilihan: ");
 
     scanf("%d", &pilihan);
 
     switch (pilihan) {
-        case 1:
-            // tambahWarga();
-            jedaLayar();
-             break;
-        case 2:
-            // lihatDaftarWarga();
-            jedaLayar();
-            break;
-        case 3:          
-            // ubahWarga();
-            jedaLayar();
-            break;
-        case 4:            
-            // hapusWarga();
-            jedaLayar();
-            break;
-        case 0:
-            printf("Kembali ke menu utama...\n");
-            break;
-        default:
-            printf("Pilihan salah!\n");
-            jedaLayar();
-        }
+        case 1: tambahWarga(); break;
+        case 2: lihatDaftarWarga(); break;
+        case 3: cariWarga(); break;
+        case 4: editWarga(); break;
+        case 5: hapusWarga(); break;
+        case 0: printf("Kembali ke menu utama...\n"); break;
+        default: printf("Input salah!\n"); jedaLayar();       
+    }
     } while (pilihan != 0);
 }

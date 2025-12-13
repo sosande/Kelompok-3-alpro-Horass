@@ -4,6 +4,10 @@
 #include "../include/structs.h"
 #include "../include/file_handler.h"
 #include "../include/data_warga.h"
+#include "../include/layanan_surat.h"
+#include "../include/retribusi.h"
+#include "../include/mutasi.h"
+#include "../include/laporan.h"
 
 // deklarasi penyimpanan data
 Penduduk dataWarga[MAX_WARGA];           
@@ -32,7 +36,7 @@ int main() {
     printf("MENU UTAMA:\n");
     printf("[1] Kelola Data Warga\n");
     printf("[2] Layanan Surat\n");
-    printf("[3] Transaksi Retribusi\n");
+    printf("[3] Loket Retribusi\n");
     printf("[4] Mutasi Penduduk\n");
     printf("[5] Laporan & Statistik\n");
     printf("---------------------------------------------------\n");
@@ -48,16 +52,16 @@ int main() {
             menuDataWarga();
             break;
         case 2:
-            // menuLayananSurat();
+            menuLayananSurat();
             break;
         case 3:
-            // menuRetribusi();
+            menuRetribusi();
             break;
         case 4:
-            // menuMutasi();
+            menuMutasi();
             break;
         case 5:
-            // menuLaporan();
+            menuLaporan();
             break;
         case 0:
             printf("\n[INFO] Sedang menyimpan data... Jangan matikan laptop!\n");
