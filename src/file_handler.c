@@ -2,7 +2,7 @@
 #include "../include/structs.h"
 #include "../include/file_handler.h"
 
-// deklarasi variable
+// ambil data variable dari file main.c 
 // extern berfungsi agar variable tidak dibuat duplikat, dan dapat digunakan di beberapa file 
 extern Penduduk dataWarga[MAX_WARGA];
 extern int jumlahWarga;
@@ -25,8 +25,6 @@ void muatData() {
         fread(&jumlahWarga, sizeof(int), 1, file); // Baca jumlahnya dulu, lalu simpan di variable jumlah
         fread(dataWarga, sizeof(Penduduk), jumlahWarga, file); // Baca datanya, lalu simpan di variable data
         fclose(file);
-    } else {
-        printf("[INFO] File data warga baru dibuat.\n");
     }
 
     // 2. LOAD DATA SURAT
@@ -35,8 +33,6 @@ void muatData() {
         fread(&jumlahSurat, sizeof(int), 1, file);
         fread(dataSurat, sizeof(RiwayatSurat), jumlahSurat, file);
         fclose(file);
-    } else {
-        printf("[INFO] File data riwayat surat baru dibuat.\n");
     }
 
     // 3. LOAD DATA KEUANGAN
@@ -45,21 +41,15 @@ void muatData() {
         fread(&jumlahTransaksi, sizeof(int), 1, file);
         fread(dataTransaksi, sizeof(Transaksi), jumlahTransaksi, file);
         fclose(file);
-    } else {
-        printf("[INFO] File data transaksi retribusi baru dibuat.\n");
     }
 
-   
     // 4. LOAD DATA MUTASI
     file = fopen("data/db_mutasi.dat", "rb");
     if (file != NULL) {
         fread(&jumlahMutasi, sizeof(int), 1, file);
         fread(dataMutasi, sizeof(Mutasi), jumlahMutasi, file);
         fclose(file);
-    } else {
-        printf("[INFO] File data mutasi baru dibuat.\n");
     }
-
 }
 
 // --- FUNGSI SAVE (TULIS FILE) ---
