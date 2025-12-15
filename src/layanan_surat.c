@@ -14,6 +14,12 @@ int cariDataPemohon(char* nik) {
     // 1. Loop array dataWarga
     // 2. Cek apakah nik == dataWarga[i].nik
     // 3. Return index 'i' kalau ketemu
+  
+    for (int i = 0; i < jumlahWarga; i++) {
+      if (strcmp(nik, dataWarga[i].nik) == 0) {
+        return i;
+      }
+    }
     
     return -1; // Default gak ketemu
 }
@@ -31,13 +37,40 @@ void cetakSurat(int indexWarga, char* jenisSurat, char* keperluan) {
 }
 
 void buatSuratBaru() {
-    // TODO: Tugas
-    // 1. Minta Input NIK
-    // 2. Panggil cariDataPemohon()
-    // 3. Kalau ketemu, minta input Jenis Surat & Keperluan
-    // 4. Panggil cetakSurat()
+    char nik[17] = "";
+    char jenisSurat[50] = "";
+    char keperluan[100] = "";
+    int indexWarga = 0;
+
+    bersihkanLayar();
+
+    printf("=== LAYANAN BUAT SURAT BARU ===\n");
     
-    printf("\n[DEV] Fitur Buat Surat belum diisi.\n");
+    printf("Masukkan NIK Pemohon: ");
+    scanf("%s", nik);
+
+    indexWarga = cariDataPemohon(nik);
+
+    if (indexWarga == -1) {
+        printf("\n[KESALAHAN] Data warga dengan NIK %s tidak ditemukan!\n", nik);
+    } else {
+        printf("\n[INFO] Data Warga Ditemukan:\n");
+        printf("Nama Lengkap : %s\n", dataWarga[indexWarga].namaLengkap);
+        printf("Pekerjaan    : %s\n", dataWarga[indexWarga].pekerjaan);
+        printf("----------------------------------------\n"); 
+
+        // Input 2
+        printf("Jenis Surat  : ");
+        scanf(" %[^\n]", jenisSurat);
+
+        // Input 3
+        printf("Keperluan    : ");
+        scanf(" %[^\n]", keperluan);
+
+        // Eksekusi
+        cetakSurat(indexWarga, jenisSurat, keperluan);
+    }
+    
     jedaLayar();
 }
 
