@@ -8,16 +8,16 @@
 extern Penduduk dataWarga[MAX_WARGA];
 extern int jumlahWarga;
 
-void tambahWarga() {
-    // TODO: Tugas 
-    // 1. Cek apakah database penuh?
-    // 2. Input NIK, Nama, dll.
-    // 3. Validasi NIK (panggil fungsi cekNIKTerdaftar)
-    // 4. Simpan ke array dataWarga
-
-    printf("\n[DEV] Fitur Tambah Warga belum diisi logikanya.\n");
-    jedaLayar();
-}
+// void tambahWarga() {
+//     // TODO: Tugas 
+//     // 1. Cek apakah database penuh?
+//     // 2. Input NIK, Nama, dll.
+//     // 3. Validasi NIK (panggil fungsi cekNIKTerdaftar)
+//     // 4. Simpan ke array dataWarga
+//
+//     printf("\n[DEV] Fitur Tambah Warga belum diisi logikanya.\n");
+//     jedaLayar();
+// }
 
 void lihatDaftarWarga() {
     // TODO: Tugas
@@ -56,13 +56,55 @@ void editWarga() {
 }
 
 void hapusWarga() {
-    // TODO: Tugas 
-    // 1. Minta input NIK
-    // 2. Konfirmasi (Yakin hapus?)
-    // 3. Geser array (data ke-i ditimpa data ke-i+1)
-    // 4. Kurangi jumlahWarga
- 
-    printf("\n[DEV] Fitur Hapus Warga belum diisi logikanya.\n");
+    char nik[17] = "";
+    char konfirmasi = 'N'; 
+    int index = -1; 
+
+    bersihkanLayar();
+    printf("=== HAPUS DATA WARGA ===\n");
+    printf("Masukkan NIK Target: ");
+    scanf("%s", nik);
+
+    // cari data warga dengan nik 
+    for (int i = 0; i < jumlahWarga; i++) {
+        // cek apakah niknya terdaftar atau tidak
+        if (strcmp(nik, dataWarga[i].nik) == 0) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index == -1) {
+        printf("[KESALAHAN] NIK '%s' tidak ditemukan dalam database.\n", nik);
+    } else {
+        printf("\n[INFO] Data Ditemukan:\n");
+        
+        // menampilkan detail warga
+        printf("----------------------------------------\n");
+        printf("Nama Lengkap : %s\n", dataWarga[index].namaLengkap);
+        printf("Alamat       : %s\n", dataWarga[index].alamat);
+        printf("Status Saat Ini: %s\n", dataWarga[index].statusWarga);
+        printf("----------------------------------------\n");
+        
+        printf("\n[PERINGATAN] Data yang dihapus tidak dapat dikembalikan.\n");
+        printf("Apakah Anda YAKIN ingin menghapus warga ini? (Y/N): ");
+        
+        scanf(" %c", &konfirmasi); 
+
+        // cek apakah user yakin ingin menghapus data warga tersebut
+        if (konfirmasi == 'Y' || konfirmasi == 'y') {
+            // Data index ke-i ditimpa oleh data index ke-i+1
+            for (int i = index; i < jumlahWarga - 1; i++) {
+                dataWarga[i] = dataWarga[i + 1];
+            }
+
+            jumlahWarga--; // Kurangi total warga
+            printf("\n[SUKSES] Data atas nama %s telah dihapus permanen.\n", dataWarga[i].nama);
+        } else {
+            printf("\n[INFO] Penghapusan dibatalkan.\n");
+        }
+    }
+
     jedaLayar();
 }
 
