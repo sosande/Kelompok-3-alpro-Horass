@@ -15,7 +15,7 @@ static void bersihkanLayar() {
 
 // Fungsi untuk menjeda layar
 static void jedaLayar() {
-    printf("\nTekan Enter untuk melanjutkan...");
+    printf("\n\nTekan Enter untuk melanjutkan...");
     getchar(); getchar(); 
 }
 

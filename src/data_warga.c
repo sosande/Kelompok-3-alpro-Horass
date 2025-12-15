@@ -14,7 +14,7 @@ void tambahWarga() {
     // 2. Input NIK, Nama, dll.
     // 3. Validasi NIK (panggil fungsi cekNIKTerdaftar)
     // 4. Simpan ke array dataWarga
-    
+
     printf("\n[DEV] Fitur Tambah Warga belum diisi logikanya.\n");
     jedaLayar();
 }
@@ -61,7 +61,7 @@ void hapusWarga() {
     // 2. Konfirmasi (Yakin hapus?)
     // 3. Geser array (data ke-i ditimpa data ke-i+1)
     // 4. Kurangi jumlahWarga
-    
+ 
     printf("\n[DEV] Fitur Hapus Warga belum diisi logikanya.\n");
     jedaLayar();
 }

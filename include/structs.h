@@ -16,7 +16,7 @@ typedef struct {
 
 // struct Penduduk
 typedef struct {
-  char nik[16];            // Primary Key 
+  char nik[17];            // Primary Key 
   char namaLengkap[100];
   char tempatLahir[50];
   Tanggal tglLahir;        // Menggunakan struct Tanggal di atas
@@ -37,7 +37,6 @@ typedef struct {
     char jenisSurat[50];     // "Surat Pengantar", "SKCK", dll
     char keperluan[100];     
     Tanggal tglDibuat;       
-    char namaPetugas[50];    // Admin yang melayani
 } RiwayatSurat;
 
 // struct transaksi retribusi
