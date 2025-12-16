@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <time.h> // untuk generate tanggal saat ini
 #include "../include/structs.h"
 #include "../include/utils.h"
 #include "../include/layanan_surat.h"
@@ -10,11 +11,6 @@ extern RiwayatSurat dataSurat[MAX_SURAT];
 extern int jumlahSurat;
 
 int cariDataPemohon(char* nik) {
-    // TODO: Tugas
-    // 1. Loop array dataWarga
-    // 2. Cek apakah nik == dataWarga[i].nik
-    // 3. Return index 'i' kalau ketemu
-  
     for (int i = 0; i < jumlahWarga; i++) {
       if (strcmp(nik, dataWarga[i].nik) == 0) {
         return i;
@@ -23,47 +19,69 @@ int cariDataPemohon(char* nik) {
     
     return -1; // Default gak ketemu
 }
-    // cetakSurat
-    // TODO: Tugas
-    // 1. Buat nama file unik (misal: "Surat_[NIK].txt")
-    // 2. fopen file mode "w"
-    // 3. fprintf data warga (Nama, TTL, dll) ke dalam file
-    // 4. fprintf keperluan surat
-    // 5. fclose
-    // 6. Simpan data log ke array dataSurat (untuk history)
 
-    void cetakSurat(int indexWarga, char* jenisSurat, char* keperluan) {
+void cetakSurat(int indexWarga, char* jenisSurat, char* keperluan) {
     FILE *fp;
-    char namaFile[50];
+    char namaFile[100];
 
-    sprintf(namaFile, "Surat_%s.txt", dataWarga[indexWarga].nik);
+    // ambil waktu komputer saat ini  
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+
+    // buat file surat difolder output_surat
+    sprintf(namaFile, "output_surat/Surat_%s_%s.txt", dataWarga[indexWarga].nik, jenisSurat);
 
     fp = fopen(namaFile, "w");
     if (fp == NULL) {
-        printf("Gagal membuat file surat!\n");
+        printf("\n[KESALAHAN] Gagal membuat file! Pastikan folder 'output_surat' sudah ada.\n");
         return;
     }
 
-    fprintf(fp, "===== SURAT KETERANGAN =====\n\n");
-    fprintf(fp, "Jenis Surat : %s\n\n", jenisSurat);
+    // isi file surat
+    fprintf(fp, "==========================================================\n");
+    fprintf(fp, "              PEMERINTAH KELURAHAN NAGRI KALER            \n");
+    fprintf(fp, "==========================================================\n\n");
+    fprintf(fp, "SURAT KETERANGAN\n");
+    fprintf(fp, "Jenis: %s\n\n", jenisSurat);
+    
+    fprintf(fp, "Yang bertanda tangan di bawah ini, menerangkan bahwa:\n");
     fprintf(fp, "Nama        : %s\n", dataWarga[indexWarga].namaLengkap);
     fprintf(fp, "NIK         : %s\n", dataWarga[indexWarga].nik);
-    fprintf(fp, "TTL         : %s\n", dataWarga[indexWarga].ttl);
+    fprintf(fp, "TTL         : %s, %02d-%02d-%04d\n", 
+            dataWarga[indexWarga].tempatLahir, 
+            dataWarga[indexWarga].tglLahir.hari, 
+            dataWarga[indexWarga].tglLahir.bulan, 
+            dataWarga[indexWarga].tglLahir.tahun);
     fprintf(fp, "Alamat      : %s\n\n", dataWarga[indexWarga].alamat);
 
-    fprintf(fp, "Keperluan   : %s\n\n", keperluan);
-    fprintf(fp, "Demikian surat ini dibuat untuk dipergunakan sebagaimana mestinya.\n");
+    fprintf(fp, "Adalah benar warga desa kami. Surat ini untuk keperluan:\n");
+    fprintf(fp, ">> %s <<\n\n", keperluan);
+    
+    fprintf(fp, "Nagri Kaler, %02d-%02d-%d\n", t->tm_mday, t->tm_mon + 1, t->tm_year + 1900);
+    fprintf(fp, "Kepala Desa,\n\n\n");
+    fprintf(fp, "( ................... )\n");
 
     fclose(fp);
 
-    strcpy(dataSurat[jumlahSurat].namaFile, namaFile);
+    // generate kode surat otomatis
+    sprintf(dataSurat[jumlahSurat].kodeSurat, "SRT-%03d", jumlahSurat + 1);
+    sprintf(dataSurat[jumlahSurat].namaFile, "Surat_%s_%s.txt", dataWarga[indexWarga].nik, jenisSurat);
+
+    // 2. Isi data lainnya
     strcpy(dataSurat[jumlahSurat].jenisSurat, jenisSurat);
-    strcpy(dataSurat[jumlahSurat].nik, dataWarga[indexWarga].nik);
+    strcpy(dataSurat[jumlahSurat].nikPemohon, dataWarga[indexWarga].nik);
+    strcpy(dataSurat[jumlahSurat].keperluan, keperluan);
+    
+    // 3. Isi Tanggal 
+    dataSurat[jumlahSurat].tglDibuat.hari = t->tm_mday;
+    dataSurat[jumlahSurat].tglDibuat.bulan = t->tm_mon + 1;
+    dataSurat[jumlahSurat].tglDibuat.tahun = t->tm_year + 1900;
+
     jumlahSurat++;
 
-    printf("Surat berhasil dicetak: %s\n", namaFile);
+    printf("\n[SUKSES] %s berhasil dibuat!\n", dataSurat[jumlahSurat-1].jenisSurat);
 }
-    
+
 void buatSuratBaru() {
     char nik[17] = "";
     char jenisSurat[50] = "";
@@ -101,37 +119,42 @@ void buatSuratBaru() {
     
     jedaLayar();
 }
+    
+void lihatRiwayatSurat() {
+    bersihkanLayar(); 
 
-    //lihatRiwayatSurat
-    // TODO: Tugas
-    // 1. Loop array dataSurat
-    // 2. Tampilkan siapa saja yang pernah bikin surat
-
-    void lihatRiwayatSurat() {
-    int i;
-    int adaData = 0;
-
-    printf("\n=== RIWAYAT SURAT ===\n");
+    // Header diperpanjang agar muat
+    printf("=========================================================================================================\n");
+    printf("                                          RIWAYAT SURAT KELUAR                                           \n");
+    printf("=========================================================================================================\n");
+    printf("Total Surat Dicetak: %d\n", jumlahSurat);
+    
+    // HEADER TABEL (Total Lebar sktr 105 karakter)
+    printf("---------------------------------------------------------------------------------------------------------\n");
+    printf("| %-3s | %-10s | %-16s | %-30s | %-30s |\n", "NO", "TANGGAL", "NIK PEMOHON", "JENIS SURAT", "NAMA FILE");
+    printf("---------------------------------------------------------------------------------------------------------\n");
 
     if (jumlahSurat == 0) {
-        printf("Belum ada surat yang dibuat.\n");
-        jedaLayar();
-        return;
-    }
-
-    printf("Daftar pembuat surat:\n");
-
-    for (i = 0; i < jumlahSurat; i++) {
-        if (strlen(dataSurat[i].pembuat) > 0) {
-            printf("%d. %s\n", i + 1, dataSurat[i].pembuat);
-            adaData = 1;
+        // Lebar pesan kosong disesuaikan
+        printf("| %-101s |\n", "       BELUM ADA DATA SURAT YANG DIBUAT");
+    } else {
+        // LOOPING DATA
+        for (int i = 0; i < jumlahSurat; i++) {
+            // Karena nama file ada path "output_surat/", kita bisa potong sedikit saat display kalau kepanjangan
+            // Tapi untuk sekarang kita tampilkan full dulu
+            printf("| %-3d | %02d-%02d-%04d | %-16s | %-30s | %-30s |\n",
+                i + 1, 
+                dataSurat[i].tglDibuat.hari, 
+                dataSurat[i].tglDibuat.bulan,
+                dataSurat[i].tglDibuat.tahun,
+                dataSurat[i].nikPemohon,      
+                dataSurat[i].jenisSurat,       
+                dataSurat[i].namaFile // <--- Data Baru
+            );
         }
     }
 
-    if (!adaData) {
-        printf("Data surat kosong.\n");
-    }
-
+    printf("---------------------------------------------------------------------------------------------------------\n");
     jedaLayar();
 }
 

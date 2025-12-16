@@ -44,7 +44,7 @@ void detailWarga(char* nik) {
         printf("\n=== DETAIL WARGA ===\n");
         printf("NIK              : %s\n", p.nik);
         printf("Nama Lengkap     : %s\n", p.namaLengkap);
-        printf("Tempat, Tgl Lahir: %s, %02d-%02d-%04d\n", p.tempatLahir, p.tglLahir.tanggal, p.tglLahir.bulan, p.tglLahir.tahun);
+        printf("Tempat, Tgl Lahir: %s, %02d-%02d-%04d\n", p.tempatLahir, p.tglLahir.hari, p.tglLahir.bulan, p.tglLahir.tahun);
         printf("Jenis Kelamin    : %s\n", p.jenisKelamin);
         printf("Alamat           : %s\n", p.alamat);
         printf("RT/RW            : %d/%d\n", p.rt, p.rw);
@@ -52,14 +52,12 @@ void detailWarga(char* nik) {
         printf("Status Perkawinan: %s\n", p.statusPerkawinan);
         printf("Pekerjaan        : %s\n", p.pekerjaan);
         printf("Status Warga     : %s\n", p.statusWarga);
-        jedaLayar();
-    
     } else {
+        // Kalau tidak ketemu, print Error
         printf("[KESALAHAN] Data warga dengan NIK '%s' tidak ditemukan.\n", nik);
-        jedaLayar();
     }
-    // Kalau tidak ketemu, print Error
 
+    jedaLayar();
 }
 
 void cariWarga() {

@@ -32,6 +32,7 @@ int main() {
 
     printf("===================================================\n");
     printf("   SISTEM ADMINISTRASI KEPENDUDUKAN & RETRIBUSI    \n");
+    printf("               KELURAHAN NAGRI KALER               \n");
     printf("===================================================\n");
     printf("MENU UTAMA:\n");
     printf("[1] Kelola Data Warga\n");

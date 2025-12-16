@@ -1,0 +1,15 @@
+# file hasil kompilasi
+*.o
+*.exe
+./aplikasi_kelurahan
+
+#file data
+data/*.dat
+
+#file surat
+output_surat/*.txt
+
+#config editor/os
+.vscode/
+.DS_Store
+Thumbs.db

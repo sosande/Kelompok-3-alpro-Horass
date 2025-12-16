@@ -37,6 +37,8 @@ typedef struct {
     char jenisSurat[50];     // "Surat Pengantar", "SKCK", dll
     char keperluan[100];     
     Tanggal tglDibuat;       
+    char namaPetugas[50]; // petugas yang melayani
+    char namaFile[50];       // nama file surat
 } RiwayatSurat;
 
 // struct transaksi retribusi

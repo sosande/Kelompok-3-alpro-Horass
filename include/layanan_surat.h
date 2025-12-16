@@ -15,7 +15,7 @@ int cariDataPemohon(char* nik);
 // generate surat menjadi file txt 
 void cetakSurat(int indexWarga, char* jenisSurat, char* keperluan);
 
-// Fitur Lihat History
+// Fitur Lihat riwayat surat
 void lihatRiwayatSurat();
 
 #endif
