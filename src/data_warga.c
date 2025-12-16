@@ -39,9 +39,25 @@ void cariWarga() {
     // TODO: Tugas
     // 1. Minta input NIK atau Nama
     // 2. Panggil fungsi detailWarga() jika ketemu
-    
-    printf("\n[DEV] Fitur Cari Warga belum diisi logikanya.\n");
-    jedaLayar();
+    char input[100];
+    int index = -1;
+
+    printf("Masukkan NIK atau Nama Warga: ");
+    scanf("%s", input);
+
+    for (int i = 0; i < jumlahWarga; i++) {
+        if (strcmp(dataWarga[i].nik, input) == 0 || strcmp(dataWarga[i].namaLengkap, input) == 0) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index != -1) {
+        detailWarga(dataWarga[index].nik);
+    } else {
+        printf("[KESALAHAN] Data warga tidak ditemukan.\n");
+        jedaLayar();
+    }
 }
 
 void editWarga() {
