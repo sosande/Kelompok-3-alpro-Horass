@@ -23,8 +23,7 @@ int cariDataPemohon(char* nik) {
     
     return -1; // Default gak ketemu
 }
-
-void cetakSurat(int indexWarga, char* jenisSurat, char* keperluan) {
+    // cetakSurat
     // TODO: Tugas
     // 1. Buat nama file unik (misal: "Surat_[NIK].txt")
     // 2. fopen file mode "w"
@@ -32,10 +31,39 @@ void cetakSurat(int indexWarga, char* jenisSurat, char* keperluan) {
     // 4. fprintf keperluan surat
     // 5. fclose
     // 6. Simpan data log ke array dataSurat (untuk history)
-    
-    printf("\n[DEV] Simulasi cetak surat %s untuk %s...\n", jenisSurat, dataWarga[indexWarga].namaLengkap);
-}
 
+    void cetakSurat(int indexWarga, char* jenisSurat, char* keperluan) {
+    FILE *fp;
+    char namaFile[50];
+
+    sprintf(namaFile, "Surat_%s.txt", dataWarga[indexWarga].nik);
+
+    fp = fopen(namaFile, "w");
+    if (fp == NULL) {
+        printf("Gagal membuat file surat!\n");
+        return;
+    }
+
+    fprintf(fp, "===== SURAT KETERANGAN =====\n\n");
+    fprintf(fp, "Jenis Surat : %s\n\n", jenisSurat);
+    fprintf(fp, "Nama        : %s\n", dataWarga[indexWarga].namaLengkap);
+    fprintf(fp, "NIK         : %s\n", dataWarga[indexWarga].nik);
+    fprintf(fp, "TTL         : %s\n", dataWarga[indexWarga].ttl);
+    fprintf(fp, "Alamat      : %s\n\n", dataWarga[indexWarga].alamat);
+
+    fprintf(fp, "Keperluan   : %s\n\n", keperluan);
+    fprintf(fp, "Demikian surat ini dibuat untuk dipergunakan sebagaimana mestinya.\n");
+
+    fclose(fp);
+
+    strcpy(dataSurat[jumlahSurat].namaFile, namaFile);
+    strcpy(dataSurat[jumlahSurat].jenisSurat, jenisSurat);
+    strcpy(dataSurat[jumlahSurat].nik, dataWarga[indexWarga].nik);
+    jumlahSurat++;
+
+    printf("Surat berhasil dicetak: %s\n", namaFile);
+}
+    
 void buatSuratBaru() {
     char nik[17] = "";
     char jenisSurat[50] = "";
@@ -74,12 +102,36 @@ void buatSuratBaru() {
     jedaLayar();
 }
 
-void lihatRiwayatSurat() {
+    //lihatRiwayatSurat
     // TODO: Tugas
     // 1. Loop array dataSurat
     // 2. Tampilkan siapa saja yang pernah bikin surat
-    
-    printf("\n[DEV] Fitur History Surat belum diisi.\n");
+
+    void lihatRiwayatSurat() {
+    int i;
+    int adaData = 0;
+
+    printf("\n=== RIWAYAT SURAT ===\n");
+
+    if (jumlahSurat == 0) {
+        printf("Belum ada surat yang dibuat.\n");
+        jedaLayar();
+        return;
+    }
+
+    printf("Daftar pembuat surat:\n");
+
+    for (i = 0; i < jumlahSurat; i++) {
+        if (strlen(dataSurat[i].pembuat) > 0) {
+            printf("%d. %s\n", i + 1, dataSurat[i].pembuat);
+            adaData = 1;
+        }
+    }
+
+    if (!adaData) {
+        printf("Data surat kosong.\n");
+    }
+
     jedaLayar();
 }
 
