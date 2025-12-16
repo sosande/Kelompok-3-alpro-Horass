@@ -37,21 +37,20 @@ void detailWarga(char* nik) {
 
 void cariWarga() {
     // TODO: Tugas
-    // 1. Minta input NIK atau Nama
-    // 2. Panggil fungsi detailWarga() jika ketemu
+
     char input[100];
     int index = -1;
-
+    // minta input NIK atau Nama
     printf("Masukkan NIK atau Nama Warga: ");
     scanf("%s", input);
-
+    // cari data warga dengan nik atau nama
     for (int i = 0; i < jumlahWarga; i++) {
         if (strcmp(dataWarga[i].nik, input) == 0 || strcmp(dataWarga[i].namaLengkap, input) == 0) {
             index = i;
             break;
         }
     }
-
+    // tampilkan detail warga jika ditemukan
     if (index != -1) {
         detailWarga(dataWarga[index].nik);
     } else {
@@ -63,11 +62,74 @@ void cariWarga() {
 void editWarga() {
     // TODO: Tugas
     // 1. Minta input NIK yang mau diedit
-    // 2. Cari index-nya
-    // 3. Tawarkan mau edit kolom apa (Nama/Alamat/Status)
-    // 4. Update data di array
+    char nik[17] = "";
+    printf("Masukkan NIK yang ingin diedit: ");
+    scanf("%s", nik);
     
-    printf("\n[DEV] Fitur Edit Warga belum diisi logikanya.\n");
+    // 2. Cari index-nya
+    int index = -1;
+    for (int i = 0; i < jumlahWarga; i++) {
+        if (strcmp(dataWarga[i].nik, nik) == 0) {
+            index = i;
+            break;
+        }
+    }
+    // 3. Tawarkan mau edit kolom apa (Nama/Alamat/Status)
+    if (index == -1) {
+        printf("[KESALAHAN] NIK '%s' tidak ditemukan dalam database.\n", nik);
+        jedaLayar();
+        return;
+    }
+    printf("\nData Ditemukan:\n");
+    printf("----------------------------------------\n");
+    printf("Nama Lengkap : %s\n", dataWarga[index].namaLengkap);
+    printf("Alamat       : %s\n", dataWarga[index].alamat);
+    printf("Status Saat Ini: %s\n", dataWarga[index].statusWarga);
+    printf("----------------------------------------\n");
+    printf("\nPilih kolom yang ingin diedit:\n");
+    printf("[1] Nama Lengkap\n");
+    printf("[2] Alamat\n");
+    printf("[3] Status Warga\n");
+    printf("Pilihan: ");
+    int pilihan;
+    scanf("%d", &pilihan);
+    char buffer[100];
+    switch (pilihan) {
+        case 1:
+            printf("Masukkan Nama Lengkap baru: ");
+            scanf(" %[^\n]", buffer);
+            // strcpy(dataWarga[index].namaLengkap, buffer);
+            break;
+        case 2:
+            printf("Masukkan Alamat baru: ");
+            scanf(" %[^\n]", buffer);
+            // strcpy(dataWarga[index].alamat, buffer);
+            break;
+        case 3:
+            printf("Masukkan Status Warga baru: ");
+            scanf(" %[^\n]", buffer);
+            // strcpy(dataWarga[index].statusWarga, buffer);
+            break;
+        default:
+            printf("[KESALAHAN] Pilihan tidak valid.\n");
+            jedaLayar();
+            return;
+    }
+
+    // 4. Update data di array
+
+    switch (pilihan) {
+        case 1:
+            strcpy(dataWarga[index].namaLengkap, buffer);
+            break;
+        case 2:
+            strcpy(dataWarga[index].alamat, buffer);
+            break;
+        case 3:
+            strcpy(dataWarga[index].statusWarga, buffer);
+            break;
+    }
+    printf("\n[SUKSES] Data warga telah diperbarui.\n");
     jedaLayar();
 }
 
