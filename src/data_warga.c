@@ -30,9 +30,36 @@ void lihatDaftarWarga() {
 
 void detailWarga(char* nik) {
     // TODO: Tugas
-    // 1. Cari index warga berdasarkan NIK
-    // 2. Kalau ketemu, print semua data (TTL, Agama, Status, dll)
-    // 3. Kalau tidak ketemu, print Error
+    // Cari index warga berdasarkan NIK
+    int index = -1;
+    for (int i = 0; i < jumlahWarga; i++) {
+        if (strcmp(dataWarga[i].nik, nik) == 0) {
+            index = i;
+            break;
+        }
+    }
+    // Kalau ketemu, print semua data (TTL, Agama, Status, dll)
+    if (index != -1) {
+        Penduduk p = dataWarga[index];
+        printf("\n=== DETAIL WARGA ===\n");
+        printf("NIK              : %s\n", p.nik);
+        printf("Nama Lengkap     : %s\n", p.namaLengkap);
+        printf("Tempat, Tgl Lahir: %s, %02d-%02d-%04d\n", p.tempatLahir, p.tglLahir.tanggal, p.tglLahir.bulan, p.tglLahir.tahun);
+        printf("Jenis Kelamin    : %s\n", p.jenisKelamin);
+        printf("Alamat           : %s\n", p.alamat);
+        printf("RT/RW            : %d/%d\n", p.rt, p.rw);
+        printf("Agama            : %s\n", p.agama);
+        printf("Status Perkawinan: %s\n", p.statusPerkawinan);
+        printf("Pekerjaan        : %s\n", p.pekerjaan);
+        printf("Status Warga     : %s\n", p.statusWarga);
+        jedaLayar();
+    
+    } else {
+        printf("[KESALAHAN] Data warga dengan NIK '%s' tidak ditemukan.\n", nik);
+        jedaLayar();
+    }
+    // Kalau tidak ketemu, print Error
+
 }
 
 void cariWarga() {
