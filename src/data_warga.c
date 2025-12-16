@@ -8,16 +8,16 @@
 extern Penduduk dataWarga[MAX_WARGA];
 extern int jumlahWarga;
 
-// void tambahWarga() {
-//     // TODO: Tugas 
-//     // 1. Cek apakah database penuh?
-//     // 2. Input NIK, Nama, dll.
-//     // 3. Validasi NIK (panggil fungsi cekNIKTerdaftar)
-//     // 4. Simpan ke array dataWarga
-//
-//     printf("\n[DEV] Fitur Tambah Warga belum diisi logikanya.\n");
-//     jedaLayar();
-// }
+void tambahWarga() {
+    // TODO: Tugas 
+    // 1. Cek apakah database penuh?
+    // 2. Input NIK, Nama, dll.
+    // 3. Validasi NIK (panggil fungsi cekNIKTerdaftar)
+    // 4. Simpan ke array dataWarga
+
+    printf("\n[DEV] Fitur Tambah Warga belum diisi logikanya.\n");
+    jedaLayar();
+}
 
 void lihatDaftarWarga() {
     // TODO: Tugas
@@ -99,7 +99,7 @@ void hapusWarga() {
             }
 
             jumlahWarga--; // Kurangi total warga
-            printf("\n[SUKSES] Data atas nama %s telah dihapus permanen.\n", dataWarga[i].nama);
+            printf("\n[SUKSES] Data atas nama %s telah dihapus permanen.\n", dataWarga[index].namaLengkap);
         } else {
             printf("\n[INFO] Penghapusan dibatalkan.\n");
         }
