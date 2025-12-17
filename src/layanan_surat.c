@@ -22,64 +22,72 @@ int cariDataPemohon(char* nik) {
 
 void cetakSurat(int indexWarga, char* jenisSurat, char* keperluan) {
     FILE *fp;
-    char namaFile[100];
+    char namaFile[120];
 
-    // ambil waktu komputer saat ini  
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
 
-    // buat file surat difolder output_surat
-    sprintf(namaFile, "output_surat/Surat_%s_%s.txt", dataWarga[indexWarga].nik, jenisSurat);
+    // Nama file
+    sprintf(namaFile, "output_surat/Surat_%s_%s.txt",
+            dataWarga[indexWarga].nik, jenisSurat);
 
     fp = fopen(namaFile, "w");
     if (fp == NULL) {
-        printf("\n[KESALAHAN] Gagal membuat file! Pastikan folder 'output_surat' sudah ada.\n");
+        printf("\n[KESALAHAN] Gagal membuat file surat.\n");
+        printf("Pastikan folder 'output_surat' sudah tersedia.\n");
         return;
     }
 
-    // isi file surat
-    fprintf(fp, "==========================================================\n");
-    fprintf(fp, "              PEMERINTAH KELURAHAN NAGRI KALER            \n");
-    fprintf(fp, "==========================================================\n\n");
-    fprintf(fp, "SURAT KETERANGAN\n");
-    fprintf(fp, "Jenis: %s\n\n", jenisSurat);
-    
-    fprintf(fp, "Yang bertanda tangan di bawah ini, menerangkan bahwa:\n");
-    fprintf(fp, "Nama        : %s\n", dataWarga[indexWarga].namaLengkap);
-    fprintf(fp, "NIK         : %s\n", dataWarga[indexWarga].nik);
-    fprintf(fp, "TTL         : %s, %02d-%02d-%04d\n", 
-            dataWarga[indexWarga].tempatLahir, 
-            dataWarga[indexWarga].tglLahir.hari, 
-            dataWarga[indexWarga].tglLahir.bulan, 
-            dataWarga[indexWarga].tglLahir.tahun);
-    fprintf(fp, "Alamat      : %s\n\n", dataWarga[indexWarga].alamat);
+    /* ===================== ISI SURAT ===================== */
+    fprintf(fp, "=====================================================================\n");
+    fprintf(fp, "                     PEMERINTAH DESA NAGRI KALER                     \n");
+    fprintf(fp, "=====================================================================\n\n");
 
-    fprintf(fp, "Adalah benar warga desa kami. Surat ini untuk keperluan:\n");
-    fprintf(fp, ">> %s <<\n\n", keperluan);
-    
-    fprintf(fp, "Nagri Kaler, %02d-%02d-%d\n", t->tm_mday, t->tm_mon + 1, t->tm_year + 1900);
-    fprintf(fp, "Kepala Desa,\n\n\n");
-    fprintf(fp, "( ................... )\n");
+    fprintf(fp, "                              SURAT KETERANGAN                      \n");
+    fprintf(fp, "                           Jenis Surat : %s                          \n\n", jenisSurat);
+
+    fprintf(fp, "Yang bertanda tangan di bawah ini menerangkan bahwa:\n\n");
+
+    fprintf(fp, "Nama Lengkap     : %s\n", dataWarga[indexWarga].namaLengkap);
+    fprintf(fp, "NIK              : %s\n", dataWarga[indexWarga].nik);
+    fprintf(fp, "Tempat/Tgl Lahir : %s, %02d-%02d-%04d\n",
+            dataWarga[indexWarga].tempatLahir,
+            dataWarga[indexWarga].tglLahir.hari,
+            dataWarga[indexWarga].tglLahir.bulan,
+            dataWarga[indexWarga].tglLahir.tahun);
+    fprintf(fp, "Alamat           : %s\n\n", dataWarga[indexWarga].alamat);
+
+    fprintf(fp, "Adalah benar warga Desa Nagri Kaler.\n");
+    fprintf(fp, "Surat keterangan ini dibuat untuk keperluan:\n\n");
+    fprintf(fp, "    \"%s\"\n\n", keperluan);
+
+    fprintf(fp, "Demikian surat keterangan ini dibuat agar dapat digunakan sebagaimana mestinya.\n\n");
+
+    fprintf(fp, "Nagri Kaler, %02d-%02d-%04d\n\n",
+            t->tm_mday, t->tm_mon + 1, t->tm_year + 1900);
+
+    fprintf(fp, "Kepala Desa Nagri Kaler,\n\n\n");
+    fprintf(fp, "( _________________________ )\n");
 
     fclose(fp);
 
-    // generate kode surat otomatis
+    /* ===================== SIMPAN RIWAYAT ===================== */
     sprintf(dataSurat[jumlahSurat].kodeSurat, "SRT-%03d", jumlahSurat + 1);
-    sprintf(dataSurat[jumlahSurat].namaFile, "Surat_%s_%s.txt", dataWarga[indexWarga].nik, jenisSurat);
+    sprintf(dataSurat[jumlahSurat].namaFile, "Surat_%s_%s.txt",
+            dataWarga[indexWarga].nik, jenisSurat);
 
-    // 2. Isi data lainnya
     strcpy(dataSurat[jumlahSurat].jenisSurat, jenisSurat);
     strcpy(dataSurat[jumlahSurat].nikPemohon, dataWarga[indexWarga].nik);
     strcpy(dataSurat[jumlahSurat].keperluan, keperluan);
-    
-    // 3. Isi Tanggal 
-    dataSurat[jumlahSurat].tglDibuat.hari = t->tm_mday;
+
+    dataSurat[jumlahSurat].tglDibuat.hari  = t->tm_mday;
     dataSurat[jumlahSurat].tglDibuat.bulan = t->tm_mon + 1;
     dataSurat[jumlahSurat].tglDibuat.tahun = t->tm_year + 1900;
 
     jumlahSurat++;
 
-    printf("\n[SUKSES] %s berhasil dibuat!\n", dataSurat[jumlahSurat-1].jenisSurat);
+    printf("\n[SUKSES] Surat \"%s\" berhasil dibuat.\n", jenisSurat);
+    printf("[INFO] File disimpan sebagai: %s\n", namaFile);
 }
 
 void buatSuratBaru() {
