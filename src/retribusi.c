@@ -10,17 +10,24 @@ extern Transaksi dataTransaksi[MAX_TRANSAKSI];
 extern int jumlahTransaksi;
 
 /* ==============================
-  ini BAYAR RETRIBUSI
+   BAYAR RETRIBUSI
 ============================== */
 void bayarRetribusi() {
     char nikCari[20];
     int ditemukan = -1;
 
+    // Cegah overflow array
+    if (jumlahTransaksi >= MAX_TRANSAKSI) {
+        printf("Data transaksi sudah penuh!\n");
+        jedaLayar();
+        return;
+    }
+
     printf("\n=== BAYAR RETRIBUSI ===\n");
     printf("Masukkan NIK: ");
-    scanf("%s", nikCari);
+    scanf("%19s", nikCari);
 
-    // Cari warga berdasarkan NIK
+    // Cari warga
     for (int i = 0; i < jumlahWarga; i++) {
         if (strcmp(dataWarga[i].nik, nikCari) == 0) {
             ditemukan = i;
@@ -34,14 +41,29 @@ void bayarRetribusi() {
         return;
     }
 
-    // Input data transaksi
+    // Cegah pembayaran ganda
+    for (int i = 0; i < jumlahTransaksi; i++) {
+        if (strcmp(dataTransaksi[i].nik, nikCari) == 0) {
+            printf("Warga ini sudah membayar retribusi.\n");
+            jedaLayar();
+            return;
+        }
+    }
+
+    // Simpan transaksi
     strcpy(dataTransaksi[jumlahTransaksi].nik, nikCari);
 
     printf("Jenis Retribusi (Kebersihan/Keamanan): ");
-    scanf("%s", dataTransaksi[jumlahTransaksi].jenis);
+    scanf("%19s", dataTransaksi[jumlahTransaksi].jenis);
 
     printf("Nominal: ");
     scanf("%d", &dataTransaksi[jumlahTransaksi].nominal);
+
+    if (dataTransaksi[jumlahTransaksi].nominal <= 0) {
+        printf("Nominal tidak valid.\n");
+        jedaLayar();
+        return;
+    }
 
     jumlahTransaksi++;
 
@@ -50,14 +72,15 @@ void bayarRetribusi() {
 }
 
 /* ==============================
-  ini  LAPORAN TUNGGAKAN
+   LAPORAN TUNGGAKAN
+   Asumsi: Berlaku untuk satu periode aktif
 ============================== */
 void laporanTunggakan() {
     Penduduk penunggak[MAX_WARGA];
     int jumlahPenunggak = 0;
     int sudahBayar;
 
-    // Cek siapa yang belum membayar
+    // Bandingkan data warga vs transaksi
     for (int i = 0; i < jumlahWarga; i++) {
         sudahBayar = 0;
         for (int j = 0; j < jumlahTransaksi; j++) {
@@ -71,7 +94,7 @@ void laporanTunggakan() {
         }
     }
 
-    // Bubble Sort berdasarkan nama (A-Z)
+    // Bubble Sort O(n^2) berdasarkan nama (A-Z)
     Penduduk temp;
     for (int i = 0; i < jumlahPenunggak - 1; i++) {
         for (int j = 0; j < jumlahPenunggak - i - 1; j++) {
@@ -84,10 +107,10 @@ void laporanTunggakan() {
     }
 
     printf("\n=== DAFTAR PENUNGGAK RETRIBUSI ===\n");
-    printf("NIK\t\tNama\t\tRT\n");
+    printf("%-16s %-15s %s\n", "NIK", "Nama", "RT");
 
     for (int i = 0; i < jumlahPenunggak; i++) {
-        printf("%s\t%-15s\t%d\n",
+        printf("%-16s %-15s %d\n",
                penunggak[i].nik,
                penunggak[i].nama,
                penunggak[i].rt);
@@ -101,16 +124,16 @@ void laporanTunggakan() {
 }
 
 /* ==============================
-  ini  RIWAYAT TRANSAKSI
+   RIWAYAT TRANSAKSI
 ============================== */
 void riwayatTransaksi() {
     int total = 0;
 
     printf("\n=== RIWAYAT TRANSAKSI RETRIBUSI ===\n");
-    printf("No\tNIK\t\tJenis\t\tNominal\n");
+    printf("%-3s %-16s %-12s %s\n", "No", "NIK", "Jenis", "Nominal");
 
     for (int i = 0; i < jumlahTransaksi; i++) {
-        printf("%d\t%s\t%-10s\t%d\n",
+        printf("%-3d %-16s %-12s %d\n",
                i + 1,
                dataTransaksi[i].nik,
                dataTransaksi[i].jenis,
@@ -125,7 +148,7 @@ void riwayatTransaksi() {
 }
 
 /* ==============================
-  ini MENU
+   MENU RETRIBUSI
 ============================== */
 void menuRetribusi() {
     int pilihan;
@@ -144,7 +167,9 @@ void menuRetribusi() {
             case 2: laporanTunggakan(); break;
             case 3: riwayatTransaksi(); break;
             case 0: break;
-            default: printf("Salah input!\n"); jedaLayar();
+            default:
+                printf("Salah input!\n");
+                jedaLayar();
         }
     } while (pilihan != 0);
 }
