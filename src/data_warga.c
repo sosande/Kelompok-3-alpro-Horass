@@ -118,33 +118,46 @@ void detailWarga(char* nik) {
     // TODO: Tugas
     // Cari index warga berdasarkan NIK
     int index = -1;
+
+    // Cari index warga berdasarkan NIK
     for (int i = 0; i < jumlahWarga; i++) {
         if (strcmp(dataWarga[i].nik, nik) == 0) {
             index = i;
             break;
         }
     }
-    // Kalau ketemu, print semua data (TTL, Agama, Status, dll)
-    if (index != -1) {
-        Penduduk p = dataWarga[index];
-        printf("\n=== DETAIL WARGA ===\n");
-        printf("NIK              : %s\n", p.nik);
-        printf("Nama Lengkap     : %s\n", p.namaLengkap);
-        printf("Tempat, Tgl Lahir: %s, %02d-%02d-%04d\n", p.tempatLahir, p.tglLahir.hari, p.tglLahir.bulan, p.tglLahir.tahun);
-        printf("Jenis Kelamin    : %s\n", p.jenisKelamin);
-        printf("Alamat           : %s\n", p.alamat);
-        printf("RT/RW            : %d/%d\n", p.rt, p.rw);
-        printf("Agama            : %s\n", p.agama);
-        printf("Status Perkawinan: %s\n", p.statusPerkawinan);
-        printf("Pekerjaan        : %s\n", p.pekerjaan);
-        printf("Status Warga     : %s\n", p.statusWarga);
-    } else {
-        // Kalau tidak ketemu, print Error
+
+    bersihkanLayar();
+
+    if (index == -1) {
+        printf("=== DETAIL DATA WARGA ===\n");
         printf("[KESALAHAN] Data warga dengan NIK '%s' tidak ditemukan.\n", nik);
+        jedaLayar();
+        return;
     }
+
+    Penduduk p = dataWarga[index];
+
+    printf("================================= DETAIL DATA WARGA =================================\n");
+    printf("NIK              : %-16s\n", p.nik);
+    printf("Nama Lengkap     : %-40s\n", p.namaLengkap);
+    printf("Tempat/Tgl Lahir : %s, %02d-%02d-%04d\n",
+           p.tempatLahir,
+           p.tglLahir.hari,
+           p.tglLahir.bulan,
+           p.tglLahir.tahun);
+    printf("Jenis Kelamin    : %-20s\n", p.jenisKelamin);
+    printf("Alamat           : %-60s\n", p.alamat);
+    printf("RT / RW          : %02d / %02d\n", p.rt, p.rw);
+    printf("Agama            : %-20s\n", p.agama);
+    printf("Status Kawin     : %-20s\n", p.statusPerkawinan);
+    printf("Pekerjaan        : %-30s\n", p.pekerjaan);
+    printf("Status Warga     : %-20s\n", p.statusWarga);
+    printf("======================================================================================\n");
 
     jedaLayar();
 }
+
 
 void cariWarga() {
     // TODO: Tugas
