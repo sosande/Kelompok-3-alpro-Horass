@@ -327,31 +327,35 @@ int cekNIKTerdaftar(char* nikCek) {
 }
 
 void menuDataWarga() {
-  int pilihan;
+    int pilihan;
 
-  do {
-    bersihkanLayar();
+    do {
+        bersihkanLayar();
+        printf("================================ MENU KELOLA DATA WARGA ================================\n");
+        printf("[1] Tambah Warga Baru\n");
+        printf("[2] Lihat Daftar Warga\n");
+        printf("[3] Cari & Detail Warga\n");
+        printf("[4] Edit Data Warga\n");
+        printf("[5] Hapus Warga\n");
+        printf("[0] Kembali ke Menu Utama\n");
+        printf("--------------------------------------------------------------------------------------\n");
+        printf("Pilihan: ");
 
-    printf("=== MENU KELOLA DATA WARGA ===\n");
-    printf("[1] Tambah Warga Baru\n");
-    printf("[2] Lihat Daftar Warga\n");
-    printf("[3] Cari & Detail Warga\n");
-    printf("[4] Edit Data Warga\n");
-    printf("[5] Hapus Warga\n");
-    printf("[0] Kembali ke Menu Utama\n");   
-    printf("------------------------------\n");
-    printf("Pilihan: ");
+        scanf("%d", &pilihan);
 
-    scanf("%d", &pilihan);
-
-    switch (pilihan) {
-        case 1: tambahWarga(); break;
-        case 2: lihatDaftarWarga(); break;
-        case 3: cariWarga(); break;
-        case 4: editWarga(); break;
-        case 5: hapusWarga(); break;
-        case 0: printf("Kembali ke menu utama...\n"); break;
-        default: printf("Input salah!\n"); jedaLayar();       
-    }
+        switch (pilihan) {
+            case 1: tambahWarga(); break;
+            case 2: lihatDaftarWarga(); break;
+            case 3: cariWarga(); break;
+            case 4: editWarga(); break;
+            case 5: hapusWarga(); break;
+            case 0:
+                printf("\n[INFO] Kembali ke menu utama...\n");
+                jedaLayar();
+                break;
+            default:
+                printf("\n[KESALAHAN] Pilihan menu tidak valid.\n");
+                jedaLayar();
+        }
     } while (pilihan != 0);
 }
