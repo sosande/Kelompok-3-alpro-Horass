@@ -160,20 +160,28 @@ void lihatRiwayatSurat() {
 
 void menuLayananSurat() {
     int pilihan;
+
     do {
         bersihkanLayar();
-        printf("=== LAYANAN PERSURATAN ===\n");
+        printf("=================================== MENU LAYANAN PERSURATAN ================================\n");
         printf("[1] Buat Surat Baru\n");
         printf("[2] Lihat Riwayat Surat\n");
-        printf("[0] Kembali\n");
+        printf("[0] Kembali ke Menu Utama\n");
+        printf("------------------------------------------------------------------------------------------------\n");
         printf("Pilihan: ");
         scanf("%d", &pilihan);
 
-        switch(pilihan) {
+        switch (pilihan) {
             case 1: buatSuratBaru(); break;
             case 2: lihatRiwayatSurat(); break;
-            case 0: break;
-            default: printf("Salah input!\n"); jedaLayar();
+            case 0:
+                printf("\n[INFO] Kembali ke menu utama...\n");
+                jedaLayar();
+                break;
+            default:
+                printf("\n[KESALAHAN] Pilihan menu tidak valid.\n");
+                jedaLayar();
         }
     } while (pilihan != 0);
 }
+
