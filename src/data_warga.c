@@ -20,11 +20,33 @@ void tambahWarga() {
 }
 
 void lihatDaftarWarga() {
-    // TODO: Tugas
-    // 1. Loop dari 0 sampai jumlahWarga
-    // 2. Printf data dalam bentuk tabel rapi
-    
-    printf("\n[DEV] Fitur Lihat Daftar belum diisi logikanya.\n");
+    bersihkanLayar();
+    printf("=== DAFTAR DATA WARGA ===\n");
+
+    if (jumlahWarga == 0) {
+        printf("[INFO] Belum ada data warga.\n");
+        jedaLayar();
+        return;
+    }
+
+    printf("----------------------------------------------------------------------------------------------------\n");
+    printf("| %-3s | %-16s | %-20s | %-12s | %-15s | %-10s |\n",
+           "No", "NIK", "Nama", "Kelamin", "Pekerjaan", "Status");
+    printf("----------------------------------------------------------------------------------------------------\n");
+
+    for (int i = 0; i < jumlahWarga; i++) {
+        printf("| %-3d | %-16s | %-20s | %-12s | %-15s | %-10s |\n",
+               i + 1,
+               dataWarga[i].nik,
+               dataWarga[i].namaLengkap,
+               dataWarga[i].jenisKelamin,
+               dataWarga[i].pekerjaan,
+               dataWarga[i].statusWarga);
+    }
+
+    printf("----------------------------------------------------------------------------------------------------\n");
+    printf("Total Warga: %d orang\n", jumlahWarga);
+
     jedaLayar();
 }
 
