@@ -184,63 +184,59 @@ void cariWarga() {
 }
 
 void editWarga() {
-    // TODO: Tugas
-    // 1. Minta input NIK yang mau diedit
-    char nik[17] = "";
-    printf("Masukkan NIK yang ingin diedit: ");
-    scanf("%s", nik);
-    
-    // 2. Cari index-nya
+    char nik[17];
     int index = -1;
+    int pilihan;
+    char buffer[100];
+
+    bersihkanLayar();
+    printf("================================= EDIT DATA WARGA ===================================\n");
+    printf("Masukkan NIK Warga: ");
+    scanf("%s", nik);
+    printf("--------------------------------------------------------------------------------------\n");
+
+    // Cari data
     for (int i = 0; i < jumlahWarga; i++) {
         if (strcmp(dataWarga[i].nik, nik) == 0) {
             index = i;
             break;
         }
     }
-    // 3. Tawarkan mau edit kolom apa (Nama/Alamat/Status)
+
     if (index == -1) {
-        printf("[KESALAHAN] NIK '%s' tidak ditemukan dalam database.\n", nik);
+        printf("[KESALAHAN] Data warga dengan NIK '%s' tidak ditemukan.\n", nik);
+        printf("======================================================================================\n");
         jedaLayar();
         return;
     }
-    printf("\nData Ditemukan:\n");
-    printf("----------------------------------------\n");
-    printf("Nama Lengkap : %s\n", dataWarga[index].namaLengkap);
-    printf("Alamat       : %s\n", dataWarga[index].alamat);
-    printf("Status Saat Ini: %s\n", dataWarga[index].statusWarga);
-    printf("----------------------------------------\n");
-    printf("\nPilih kolom yang ingin diedit:\n");
+
+    // Preview data
+    printf("DATA WARGA DITEMUKAN\n");
+    printf("--------------------------------------------------------------------------------------\n");
+    printf("NIK          : %-16s\n", dataWarga[index].nik);
+    printf("Nama Lengkap : %-40s\n", dataWarga[index].namaLengkap);
+    printf("Alamat       : %-60s\n", dataWarga[index].alamat);
+    printf("Status Warga : %-20s\n", dataWarga[index].statusWarga);
+    printf("--------------------------------------------------------------------------------------\n");
+
+    // Menu edit
+    printf("PILIH KOLOM YANG INGIN DIEDIT\n");
     printf("[1] Nama Lengkap\n");
     printf("[2] Alamat\n");
     printf("[3] Status Warga\n");
+    printf("[0] Batal\n");
     printf("Pilihan: ");
-    int pilihan;
     scanf("%d", &pilihan);
-    char buffer[100];
-    switch (pilihan) {
-        case 1:
-            printf("Masukkan Nama Lengkap baru: ");
-            scanf(" %[^\n]", buffer);
-            // strcpy(dataWarga[index].namaLengkap, buffer);
-            break;
-        case 2:
-            printf("Masukkan Alamat baru: ");
-            scanf(" %[^\n]", buffer);
-            // strcpy(dataWarga[index].alamat, buffer);
-            break;
-        case 3:
-            printf("Masukkan Status Warga baru: ");
-            scanf(" %[^\n]", buffer);
-            // strcpy(dataWarga[index].statusWarga, buffer);
-            break;
-        default:
-            printf("[KESALAHAN] Pilihan tidak valid.\n");
-            jedaLayar();
-            return;
+
+    if (pilihan == 0) {
+        printf("\n[INFO] Edit data dibatalkan.\n");
+        printf("======================================================================================\n");
+        jedaLayar();
+        return;
     }
 
-    // 4. Update data di array
+    printf("Masukkan nilai baru: ");
+    scanf(" %[^\n]", buffer);
 
     switch (pilihan) {
         case 1:
@@ -252,8 +248,15 @@ void editWarga() {
         case 3:
             strcpy(dataWarga[index].statusWarga, buffer);
             break;
+        default:
+            printf("\n[KESALAHAN] Pilihan tidak valid.\n");
+            printf("======================================================================================\n");
+            jedaLayar();
+            return;
     }
-    printf("\n[SUKSES] Data warga telah diperbarui.\n");
+
+    printf("\n[SUKSES] Data warga berhasil diperbarui.\n");
+    printf("======================================================================================\n");
     jedaLayar();
 }
 
