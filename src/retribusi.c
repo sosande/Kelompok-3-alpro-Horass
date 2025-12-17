@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
-
+#include "../include/structs.h"
+#include "../include/utils.h"
+#include "../include/retribusi.h"
 #define MAX_WARGA 100
 #define MAX_TRANSAKSI 100
 
