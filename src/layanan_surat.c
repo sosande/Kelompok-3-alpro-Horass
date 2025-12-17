@@ -86,37 +86,40 @@ void buatSuratBaru() {
     char nik[17] = "";
     char jenisSurat[50] = "";
     char keperluan[100] = "";
-    int indexWarga = 0;
+    int indexWarga;
 
     bersihkanLayar();
-
-    printf("=== LAYANAN BUAT SURAT BARU ===\n");
-    
+    printf("================================ LAYANAN BUAT SURAT BARU ================================\n");
     printf("Masukkan NIK Pemohon: ");
     scanf("%s", nik);
+    printf("-----------------------------------------------------------------------------------------\n");
 
     indexWarga = cariDataPemohon(nik);
 
     if (indexWarga == -1) {
-        printf("\n[KESALAHAN] Data warga dengan NIK %s tidak ditemukan!\n", nik);
-    } else {
-        printf("\n[INFO] Data Warga Ditemukan:\n");
-        printf("Nama Lengkap : %s\n", dataWarga[indexWarga].namaLengkap);
-        printf("Pekerjaan    : %s\n", dataWarga[indexWarga].pekerjaan);
-        printf("----------------------------------------\n"); 
-
-        // Input 2
-        printf("Jenis Surat  : ");
-        scanf(" %[^\n]", jenisSurat);
-
-        // Input 3
-        printf("Keperluan    : ");
-        scanf(" %[^\n]", keperluan);
-
-        // Eksekusi
-        cetakSurat(indexWarga, jenisSurat, keperluan);
+        printf("[KESALAHAN] Data warga dengan NIK '%s' tidak ditemukan.\n", nik);
+        printf("=========================================================================================\n");
+        jedaLayar();
+        return;
     }
-    
+
+    // Preview data pemohon
+    printf("DATA PEMOHON DITEMUKAN\n");
+    printf("-----------------------------------------------------------------------------------------\n");
+    printf("NIK          : %-16s\n", dataWarga[indexWarga].nik);
+    printf("Nama Lengkap : %-40s\n", dataWarga[indexWarga].namaLengkap);
+    printf("Pekerjaan    : %-30s\n", dataWarga[indexWarga].pekerjaan);
+    printf("-----------------------------------------------------------------------------------------\n");
+
+    printf("Jenis Surat  : ");
+    scanf(" %[^\n]", jenisSurat);
+
+    printf("Keperluan    : ");
+    scanf(" %[^\n]", keperluan);
+
+    cetakSurat(indexWarga, jenisSurat, keperluan);
+
+    printf("=========================================================================================\n");
     jedaLayar();
 }
     
