@@ -10,7 +10,7 @@ extern Transaksi dataTransaksi[MAX_TRANSAKSI];
 extern int jumlahTransaksi;
 
 /* ==============================
-   BAYAR RETRIBUSI
+  ini BAYAR RETRIBUSI
 ============================== */
 void bayarRetribusi() {
     char nikCari[20];
@@ -33,51 +33,48 @@ void bayarRetribusi() {
         jedaLayar();
         return;
     }
-/* =====================
-   FUNGSI BANTUAN
-===================== */
-int sudahBayar(int idWarga) {
-    for (int i = 0; i < jumlahRetribusi; i++) {
-        if (dataRetribusi[i].idWarga == idWarga) {
-            return 1;
+
+    // Input data transaksi
+    strcpy(dataTransaksi[jumlahTransaksi].nik, nikCari);
+
+    printf("Jenis Retribusi (Kebersihan/Keamanan): ");
+    scanf("%s", dataTransaksi[jumlahTransaksi].jenis);
+
+    printf("Nominal: ");
+    scanf("%d", &dataTransaksi[jumlahTransaksi].nominal);
+
+    jumlahTransaksi++;
+
+    printf("Pembayaran berhasil dicatat.\n");
+    jedaLayar();
+}
+
+/* ==============================
+  ini  LAPORAN TUNGGAKAN
+============================== */
+void laporanTunggakan() {
+    Penduduk penunggak[MAX_WARGA];
+    int jumlahPenunggak = 0;
+    int sudahBayar;
+
+    // Cek siapa yang belum membayar
+    for (int i = 0; i < jumlahWarga; i++) {
+        sudahBayar = 0;
+        for (int j = 0; j < jumlahTransaksi; j++) {
+            if (strcmp(dataWarga[i].nik, dataTransaksi[j].nik) == 0) {
+                sudahBayar = 1;
+                break;
+            }
+        }
+        if (!sudahBayar) {
+            penunggak[jumlahPenunggak++] = dataWarga[i];
         }
     }
-    return 0;
-}
 
-/* =====================
-   BAYAR RETRIBUSI
-===================== */
-void bayarRetribusi() {
-    int id, nominal;
-    char tanggal[20];
-
-    printf("\n=== BAYAR RETRIBUSI ===\n");
-    printf("Masukkan ID Warga   : ");
-    scanf("%d", &id);
-
-    printf("Masukkan Nominal    : ");
-    scanf("%d", &nominal);
-
-    printf("Masukkan Tanggal    : ");
-    scanf("%s", tanggal);
-
-    dataRetribusi[jumlahRetribusi].idWarga = id;
-    dataRetribusi[jumlahRetribusi].nominal = nominal;
-    strcpy(dataRetribusi[jumlahRetribusi].tanggal, tanggal);
-
-    jumlahRetribusi++;
-
-    printf(">> Pembayaran berhasil dicatat.\n");
-}
-
-/* =====================
-   SORT BUBBLE (A-Z)
-===================== */
-void sortPenunggak(Warga penunggak[], int n) {
-    Warga temp;
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = 0; j < n - i - 1; j++) {
+    // Bubble Sort berdasarkan nama (A-Z)
+    Penduduk temp;
+    for (int i = 0; i < jumlahPenunggak - 1; i++) {
+        for (int j = 0; j < jumlahPenunggak - i - 1; j++) {
             if (strcmp(penunggak[j].nama, penunggak[j + 1].nama) > 0) {
                 temp = penunggak[j];
                 penunggak[j] = penunggak[j + 1];
@@ -85,29 +82,13 @@ void sortPenunggak(Warga penunggak[], int n) {
             }
         }
     }
-}
 
-/* =====================
-   LAPORAN PENUNGGAK
-===================== */
-void laporanPenunggak() {
-    Warga penunggak[MAX_WARGA];
-    int jumlahPenunggak = 0;
-
-    for (int i = 0; i < jumlahWarga; i++) {
-        if (!sudahBayar(dataWarga[i].id)) {
-            penunggak[jumlahPenunggak++] = dataWarga[i];
-        }
-    }
-
-    sortPenunggak(penunggak, jumlahPenunggak);
-
-    printf("\n=== LAPORAN PENUNGGAK RETRIBUSI ===\n");
-    printf("ID\tNama\t\tRT\n");
+    printf("\n=== DAFTAR PENUNGGAK RETRIBUSI ===\n");
+    printf("NIK\t\tNama\t\tRT\n");
 
     for (int i = 0; i < jumlahPenunggak; i++) {
-        printf("%d\t%-15s\t%d\n",
-               penunggak[i].id,
+        printf("%s\t%-15s\t%d\n",
+               penunggak[i].nik,
                penunggak[i].nama,
                penunggak[i].rt);
     }
@@ -115,28 +96,55 @@ void laporanPenunggak() {
     if (jumlahPenunggak == 0) {
         printf("Tidak ada penunggak.\n");
     }
+
+    jedaLayar();
 }
 
-/* =====================
-   MENU RETRIBUSI
-===================== */
-void menuRetribusi() {
-    int pilih;
-    do {
-        printf("\n=== MENU RETRIBUSI ===\n");
-        printf("1. Bayar Retribusi\n");
-        printf("2. Laporan Penunggak\n");
-        printf("0. Kembali\n");
-        printf("Pilih: ");
-        scanf("%d", &pilih);
+/* ==============================
+  ini  RIWAYAT TRANSAKSI
+============================== */
+void riwayatTransaksi() {
+    int total = 0;
 
-        switch (pilih) {
-            case 1:
-                bayarRetribusi();
-                break;
-            case 2:
-                laporanPenunggak();
-                break;
+    printf("\n=== RIWAYAT TRANSAKSI RETRIBUSI ===\n");
+    printf("No\tNIK\t\tJenis\t\tNominal\n");
+
+    for (int i = 0; i < jumlahTransaksi; i++) {
+        printf("%d\t%s\t%-10s\t%d\n",
+               i + 1,
+               dataTransaksi[i].nik,
+               dataTransaksi[i].jenis,
+               dataTransaksi[i].nominal);
+        total += dataTransaksi[i].nominal;
+    }
+
+    printf("----------------------------------\n");
+    printf("Total Uang Masuk: %d\n", total);
+
+    jedaLayar();
+}
+
+/* ==============================
+  ini MENU
+============================== */
+void menuRetribusi() {
+    int pilihan;
+    do {
+        bersihkanLayar();
+        printf("=== LOKET RETRIBUSI ===\n");
+        printf("[1] Bayar Retribusi\n");
+        printf("[2] Cek Penunggak\n");
+        printf("[3] Riwayat Transaksi Masuk\n");
+        printf("[0] Kembali\n");
+        printf("Pilihan: ");
+        scanf("%d", &pilihan);
+
+        switch(pilihan) {
+            case 1: bayarRetribusi(); break;
+            case 2: laporanTunggakan(); break;
+            case 3: riwayatTransaksi(); break;
+            case 0: break;
+            default: printf("Salah input!\n"); jedaLayar();
         }
-    } while (pilih != 0);
+    } while (pilihan != 0);
 }
