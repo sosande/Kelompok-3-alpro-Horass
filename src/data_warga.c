@@ -9,13 +9,77 @@ extern Penduduk dataWarga[MAX_WARGA];
 extern int jumlahWarga;
 
 void tambahWarga() {
-    // TODO: Tugas 
+// TODO: Tugas 
     // 1. Cek apakah database penuh?
     // 2. Input NIK, Nama, dll.
     // 3. Validasi NIK (panggil fungsi cekNIKTerdaftar)
     // 4. Simpan ke array dataWarga
+    
+    Penduduk p;
 
-    printf("\n[DEV] Fitur Tambah Warga belum diisi logikanya.\n");
+    // 1. Cek apakah database penuh
+    if (jumlahWarga >= MAX_WARGA) {
+        printf("[KESALAHAN] Database warga sudah penuh.\n");
+        jedaLayar();
+        return;
+    }
+
+    bersihkanLayar();
+    printf("=== TAMBAH DATA WARGA BARU ===\n");
+
+    // 2. Input NIK
+    printf("NIK (16 digit): ");
+    scanf("%s", p.nik);
+
+    // 3. Validasi NIK
+    if (cekNIKTerdaftar(p.nik)) {
+        printf("[KESALAHAN] NIK sudah terdaftar.\n");
+        jedaLayar();
+        return;
+    }
+
+    // Input data lainnya
+    printf("Nama Lengkap        : ");
+    scanf(" %[^\n]", p.namaLengkap);
+
+    printf("Tempat Lahir        : ");
+    scanf(" %[^\n]", p.tempatLahir);
+
+    printf("Tanggal Lahir (DD MM YYYY): ");
+    scanf("%d %d %d", 
+          &p.tglLahir.hari, 
+          &p.tglLahir.bulan, 
+          &p.tglLahir.tahun);
+
+    printf("Jenis Kelamin       : ");
+    scanf(" %[^\n]", p.jenisKelamin);
+
+    printf("Alamat              : ");
+    scanf(" %[^\n]", p.alamat);
+
+    printf("RT                  : ");
+    scanf("%d", &p.rt);
+
+    printf("RW                  : ");
+    scanf("%d", &p.rw);
+
+    printf("Agama               : ");
+    scanf(" %[^\n]", p.agama);
+
+    printf("Status Perkawinan   : ");
+    scanf(" %[^\n]", p.statusPerkawinan);
+
+    printf("Pekerjaan           : ");
+    scanf(" %[^\n]", p.pekerjaan);
+
+    printf("Status Warga        : ");
+    scanf(" %[^\n]", p.statusWarga);
+
+    // 4. Simpan ke array
+    dataWarga[jumlahWarga] = p;
+    jumlahWarga++;
+
+    printf("\n[SUKSES] Data warga berhasil ditambahkan.\n");
     jedaLayar();
 }
 
