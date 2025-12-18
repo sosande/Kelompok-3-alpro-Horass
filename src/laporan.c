@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "../include/structs.h"
 #include "../include/utils.h"
 #include "../include/laporan.h"
@@ -9,20 +11,29 @@ extern Transaksi dataTransaksi[MAX_TRANSAKSI];
 extern int jumlahTransaksi;
 
 void statistikWarga() {
-    // TODO: Tugas
-    // 1. Loop dataWarga
-    // 2. Hitung berapa Laki-laki, Perempuan, Kartu Keluarga (KK)
-    // 3. Tampilkan angka-angkanya
-    printf("\n[DEV] Statistik Warga belum diisi.\n");
+    int laki = 0, perempuan = 0, kk = 0;
+    for(int i = 0; i < jumlahWarga; i++){
+        if(strcmp(dataWarga[i].jenisKelamin, "Laki-laki") == 0){
+            laki++;
+        } else if(strcmp(dataWarga[i].jenisKelamin, "Perempuan") == 0){
+            perempuan++;
+        }
+        kk++;
+    }
+    printf("\n=== STATISTIK KEPENDUDUKAN ===\n");
+    printf("Jumlah Laki-laki: %d\n", laki);
+    printf("Jumlah Perempuan: %d\n", perempuan);
+    printf("Jumlah Kartu Keluarga: %d\n", kk);
     jedaLayar();
 }
 
 void rekapKeuangan() {
-    // TODO: Tugas
-    // 1. Loop dataTransaksi
-    // 2. Jumlahkan field 'nominal'
-    // 3. Tampilkan Total Pemasukan Desa
-    printf("\n[DEV] Rekap Keuangan belum diisi.\n");
+    long total = 0;
+    for(int i = 0; i < jumlahTransaksi; i++){
+        total += dataTransaksi[i].nominal;
+    }
+    printf("\n=== REKAP KEUANGAN DESA ===\n");
+    printf("Total Pemasukan Desa: %ld\n", total);
     jedaLayar();
 }
 

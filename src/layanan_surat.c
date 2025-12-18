@@ -22,101 +22,112 @@ int cariDataPemohon(char* nik) {
 
 void cetakSurat(int indexWarga, char* jenisSurat, char* keperluan) {
     FILE *fp;
-    char namaFile[100];
+    char namaFile[120];
 
-    // ambil waktu komputer saat ini  
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
 
-    // buat file surat difolder output_surat
-    sprintf(namaFile, "output_surat/Surat_%s_%s.txt", dataWarga[indexWarga].nik, jenisSurat);
+    // Nama file
+    sprintf(namaFile, "output_surat/Surat_%s_%s.txt",
+            dataWarga[indexWarga].nik, jenisSurat);
 
     fp = fopen(namaFile, "w");
     if (fp == NULL) {
-        printf("\n[KESALAHAN] Gagal membuat file! Pastikan folder 'output_surat' sudah ada.\n");
+        printf("\n[KESALAHAN] Gagal membuat file surat.\n");
+        printf("Pastikan folder 'output_surat' sudah tersedia.\n");
         return;
     }
 
-    // isi file surat
-    fprintf(fp, "==========================================================\n");
-    fprintf(fp, "              PEMERINTAH KELURAHAN NAGRI KALER            \n");
-    fprintf(fp, "==========================================================\n\n");
-    fprintf(fp, "SURAT KETERANGAN\n");
-    fprintf(fp, "Jenis: %s\n\n", jenisSurat);
-    
-    fprintf(fp, "Yang bertanda tangan di bawah ini, menerangkan bahwa:\n");
-    fprintf(fp, "Nama        : %s\n", dataWarga[indexWarga].namaLengkap);
-    fprintf(fp, "NIK         : %s\n", dataWarga[indexWarga].nik);
-    fprintf(fp, "TTL         : %s, %02d-%02d-%04d\n", 
-            dataWarga[indexWarga].tempatLahir, 
-            dataWarga[indexWarga].tglLahir.hari, 
-            dataWarga[indexWarga].tglLahir.bulan, 
-            dataWarga[indexWarga].tglLahir.tahun);
-    fprintf(fp, "Alamat      : %s\n\n", dataWarga[indexWarga].alamat);
+    /* ===================== ISI SURAT ===================== */
+    fprintf(fp, "=====================================================================\n");
+    fprintf(fp, "                     PEMERINTAH DESA NAGRI KALER                     \n");
+    fprintf(fp, "=====================================================================\n\n");
 
-    fprintf(fp, "Adalah benar warga desa kami. Surat ini untuk keperluan:\n");
-    fprintf(fp, ">> %s <<\n\n", keperluan);
-    
-    fprintf(fp, "Nagri Kaler, %02d-%02d-%d\n", t->tm_mday, t->tm_mon + 1, t->tm_year + 1900);
-    fprintf(fp, "Kepala Desa,\n\n\n");
-    fprintf(fp, "( ................... )\n");
+    fprintf(fp, "                              SURAT KETERANGAN                      \n");
+    fprintf(fp, "                           Jenis Surat : %s                          \n\n", jenisSurat);
+
+    fprintf(fp, "Yang bertanda tangan di bawah ini menerangkan bahwa:\n\n");
+
+    fprintf(fp, "Nama Lengkap     : %s\n", dataWarga[indexWarga].namaLengkap);
+    fprintf(fp, "NIK              : %s\n", dataWarga[indexWarga].nik);
+    fprintf(fp, "Tempat/Tgl Lahir : %s, %02d-%02d-%04d\n",
+            dataWarga[indexWarga].tempatLahir,
+            dataWarga[indexWarga].tglLahir.hari,
+            dataWarga[indexWarga].tglLahir.bulan,
+            dataWarga[indexWarga].tglLahir.tahun);
+    fprintf(fp, "Alamat           : %s\n\n", dataWarga[indexWarga].alamat);
+
+    fprintf(fp, "Adalah benar warga Desa Nagri Kaler.\n");
+    fprintf(fp, "Surat keterangan ini dibuat untuk keperluan:\n\n");
+    fprintf(fp, "    \"%s\"\n\n", keperluan);
+
+    fprintf(fp, "Demikian surat keterangan ini dibuat agar dapat digunakan sebagaimana mestinya.\n\n");
+
+    fprintf(fp, "Nagri Kaler, %02d-%02d-%04d\n\n",
+            t->tm_mday, t->tm_mon + 1, t->tm_year + 1900);
+
+    fprintf(fp, "Kepala Desa Nagri Kaler,\n\n\n");
+    fprintf(fp, "( _________________________ )\n");
 
     fclose(fp);
 
-    // generate kode surat otomatis
+    /* ===================== SIMPAN RIWAYAT ===================== */
     sprintf(dataSurat[jumlahSurat].kodeSurat, "SRT-%03d", jumlahSurat + 1);
-    sprintf(dataSurat[jumlahSurat].namaFile, "Surat_%s_%s.txt", dataWarga[indexWarga].nik, jenisSurat);
+    sprintf(dataSurat[jumlahSurat].namaFile, "Surat_%s_%s.txt",
+            dataWarga[indexWarga].nik, jenisSurat);
 
-    // 2. Isi data lainnya
     strcpy(dataSurat[jumlahSurat].jenisSurat, jenisSurat);
     strcpy(dataSurat[jumlahSurat].nikPemohon, dataWarga[indexWarga].nik);
     strcpy(dataSurat[jumlahSurat].keperluan, keperluan);
-    
-    // 3. Isi Tanggal 
-    dataSurat[jumlahSurat].tglDibuat.hari = t->tm_mday;
+
+    dataSurat[jumlahSurat].tglDibuat.hari  = t->tm_mday;
     dataSurat[jumlahSurat].tglDibuat.bulan = t->tm_mon + 1;
     dataSurat[jumlahSurat].tglDibuat.tahun = t->tm_year + 1900;
 
     jumlahSurat++;
 
-    printf("\n[SUKSES] %s berhasil dibuat!\n", dataSurat[jumlahSurat-1].jenisSurat);
+    printf("\n[SUKSES] Surat \"%s\" berhasil dibuat.\n", jenisSurat);
+    printf("[INFO] File disimpan sebagai: %s\n", namaFile);
 }
 
 void buatSuratBaru() {
     char nik[17] = "";
     char jenisSurat[50] = "";
     char keperluan[100] = "";
-    int indexWarga = 0;
+    int indexWarga;
 
     bersihkanLayar();
-
-    printf("=== LAYANAN BUAT SURAT BARU ===\n");
-    
+    printf("================================ LAYANAN BUAT SURAT BARU ================================\n");
     printf("Masukkan NIK Pemohon: ");
     scanf("%s", nik);
+    printf("-----------------------------------------------------------------------------------------\n");
 
     indexWarga = cariDataPemohon(nik);
 
     if (indexWarga == -1) {
-        printf("\n[KESALAHAN] Data warga dengan NIK %s tidak ditemukan!\n", nik);
-    } else {
-        printf("\n[INFO] Data Warga Ditemukan:\n");
-        printf("Nama Lengkap : %s\n", dataWarga[indexWarga].namaLengkap);
-        printf("Pekerjaan    : %s\n", dataWarga[indexWarga].pekerjaan);
-        printf("----------------------------------------\n"); 
-
-        // Input 2
-        printf("Jenis Surat  : ");
-        scanf(" %[^\n]", jenisSurat);
-
-        // Input 3
-        printf("Keperluan    : ");
-        scanf(" %[^\n]", keperluan);
-
-        // Eksekusi
-        cetakSurat(indexWarga, jenisSurat, keperluan);
+        printf("[KESALAHAN] Data warga dengan NIK '%s' tidak ditemukan.\n", nik);
+        printf("=========================================================================================\n");
+        jedaLayar();
+        return;
     }
-    
+
+    // Preview data pemohon
+    printf("DATA PEMOHON DITEMUKAN\n");
+    printf("-----------------------------------------------------------------------------------------\n");
+    printf("NIK          : %-16s\n", dataWarga[indexWarga].nik);
+    printf("Nama Lengkap : %-40s\n", dataWarga[indexWarga].namaLengkap);
+    printf("Pekerjaan    : %-30s\n", dataWarga[indexWarga].pekerjaan);
+    printf("-----------------------------------------------------------------------------------------\n");
+
+    printf("Jenis Surat  : ");
+    scanf(" %[^\n]", jenisSurat);
+
+    printf("Keperluan    : ");
+    scanf(" %[^\n]", keperluan);
+
+    cetakSurat(indexWarga, jenisSurat, keperluan);
+
+    printf("=========================================================================================\n");
     jedaLayar();
 }
     
@@ -160,20 +171,28 @@ void lihatRiwayatSurat() {
 
 void menuLayananSurat() {
     int pilihan;
+
     do {
         bersihkanLayar();
-        printf("=== LAYANAN PERSURATAN ===\n");
+        printf("=================================== MENU LAYANAN PERSURATAN ================================\n");
         printf("[1] Buat Surat Baru\n");
         printf("[2] Lihat Riwayat Surat\n");
-        printf("[0] Kembali\n");
+        printf("[0] Kembali ke Menu Utama\n");
+        printf("------------------------------------------------------------------------------------------------\n");
         printf("Pilihan: ");
         scanf("%d", &pilihan);
 
-        switch(pilihan) {
+        switch (pilihan) {
             case 1: buatSuratBaru(); break;
             case 2: lihatRiwayatSurat(); break;
-            case 0: break;
-            default: printf("Salah input!\n"); jedaLayar();
+            case 0:
+                printf("\n[INFO] Kembali ke menu utama...\n");
+                jedaLayar();
+                break;
+            default:
+                printf("\n[KESALAHAN] Pilihan menu tidak valid.\n");
+                jedaLayar();
         }
     } while (pilihan != 0);
 }
+

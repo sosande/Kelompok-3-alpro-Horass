@@ -9,22 +9,114 @@ extern Penduduk dataWarga[MAX_WARGA];
 extern int jumlahWarga;
 
 void tambahWarga() {
-    // TODO: Tugas 
+// TODO: Tugas 
     // 1. Cek apakah database penuh?
     // 2. Input NIK, Nama, dll.
     // 3. Validasi NIK (panggil fungsi cekNIKTerdaftar)
     // 4. Simpan ke array dataWarga
+    
+    Penduduk p;
 
-    printf("\n[DEV] Fitur Tambah Warga belum diisi logikanya.\n");
+    // 1. Cek apakah database penuh
+    if (jumlahWarga >= MAX_WARGA) {
+        printf("[KESALAHAN] Database warga sudah penuh.\n");
+        jedaLayar();
+        return;
+    }
+
+    bersihkanLayar();
+    printf("=== TAMBAH DATA WARGA BARU ===\n");
+
+    // 2. Input NIK
+    printf("NIK (16 digit): ");
+    scanf("%s", p.nik);
+
+    // 3. Validasi NIK
+    char str[16];
+    sprintf(str[16], "%d", p.nik);
+    int count = strlen(str);
+
+    if (cekNIKTerdaftar(p.nik)) {
+        printf("[KESALAHAN] NIK sudah terdaftar.\n");
+        jedaLayar();
+        return;
+    } else if (count != 16) {
+        printf("[KESALAHAN] NIK harus 16 digit");
+    }
+
+    // Input data lainnya
+    printf("Nama Lengkap        : ");
+    scanf(" %[^\n]", p.namaLengkap);
+
+    printf("Tempat Lahir        : ");
+    scanf(" %[^\n]", p.tempatLahir);
+
+    printf("Tanggal Lahir (DD MM YYYY): ");
+    scanf("%d %d %d", 
+          &p.tglLahir.hari, 
+          &p.tglLahir.bulan, 
+          &p.tglLahir.tahun);
+
+    printf("Jenis Kelamin       : ");
+    scanf(" %[^\n]", p.jenisKelamin);
+
+    printf("Alamat              : ");
+    scanf(" %[^\n]", p.alamat);
+
+    printf("RT                  : ");
+    scanf("%d", &p.rt);
+
+    printf("RW                  : ");
+    scanf("%d", &p.rw);
+
+    printf("Agama               : ");
+    scanf(" %[^\n]", p.agama);
+
+    printf("Status Perkawinan   : ");
+    scanf(" %[^\n]", p.statusPerkawinan);
+
+    printf("Pekerjaan           : ");
+    scanf(" %[^\n]", p.pekerjaan);
+
+    printf("Status Warga        : ");
+    scanf(" %[^\n]", p.statusWarga);
+
+    // 4. Simpan ke array
+    dataWarga[jumlahWarga] = p;
+    jumlahWarga++;
+
+    printf("\n[SUKSES] Data warga berhasil ditambahkan.\n");
     jedaLayar();
 }
 
 void lihatDaftarWarga() {
-    // TODO: Tugas
-    // 1. Loop dari 0 sampai jumlahWarga
-    // 2. Printf data dalam bentuk tabel rapi
-    
-    printf("\n[DEV] Fitur Lihat Daftar belum diisi logikanya.\n");
+    bersihkanLayar();
+    printf("=== DAFTAR DATA WARGA ===\n");
+
+    if (jumlahWarga == 0) {
+        printf("[INFO] Belum ada data warga.\n");
+        jedaLayar();
+        return;
+    }
+
+    printf("----------------------------------------------------------------------------------------------------\n");
+    printf("| %-3s | %-16s | %-20s | %-12s | %-15s | %-10s |\n",
+           "No", "NIK", "Nama", "Kelamin", "Pekerjaan", "Status");
+    printf("----------------------------------------------------------------------------------------------------\n");
+
+    for (int i = 0; i < jumlahWarga; i++) {
+        printf("| %-3d | %-16s | %-20s | %-12s | %-15s | %-10s |\n",
+               i + 1,
+               dataWarga[i].nik,
+               dataWarga[i].namaLengkap,
+               dataWarga[i].jenisKelamin,
+               dataWarga[i].pekerjaan,
+               dataWarga[i].statusWarga);
+    }
+
+    printf("----------------------------------------------------------------------------------------------------\n");
+    printf("Total Warga: %d orang\n", jumlahWarga);
+
     jedaLayar();
 }
 
@@ -32,33 +124,46 @@ void detailWarga(char* nik) {
     // TODO: Tugas
     // Cari index warga berdasarkan NIK
     int index = -1;
+
+    // Cari index warga berdasarkan NIK
     for (int i = 0; i < jumlahWarga; i++) {
         if (strcmp(dataWarga[i].nik, nik) == 0) {
             index = i;
             break;
         }
     }
-    // Kalau ketemu, print semua data (TTL, Agama, Status, dll)
-    if (index != -1) {
-        Penduduk p = dataWarga[index];
-        printf("\n=== DETAIL WARGA ===\n");
-        printf("NIK              : %s\n", p.nik);
-        printf("Nama Lengkap     : %s\n", p.namaLengkap);
-        printf("Tempat, Tgl Lahir: %s, %02d-%02d-%04d\n", p.tempatLahir, p.tglLahir.hari, p.tglLahir.bulan, p.tglLahir.tahun);
-        printf("Jenis Kelamin    : %s\n", p.jenisKelamin);
-        printf("Alamat           : %s\n", p.alamat);
-        printf("RT/RW            : %d/%d\n", p.rt, p.rw);
-        printf("Agama            : %s\n", p.agama);
-        printf("Status Perkawinan: %s\n", p.statusPerkawinan);
-        printf("Pekerjaan        : %s\n", p.pekerjaan);
-        printf("Status Warga     : %s\n", p.statusWarga);
-    } else {
-        // Kalau tidak ketemu, print Error
+
+    bersihkanLayar();
+
+    if (index == -1) {
+        printf("=== DETAIL DATA WARGA ===\n");
         printf("[KESALAHAN] Data warga dengan NIK '%s' tidak ditemukan.\n", nik);
+        jedaLayar();
+        return;
     }
+
+    Penduduk p = dataWarga[index];
+
+    printf("================================= DETAIL DATA WARGA =================================\n");
+    printf("NIK              : %-16s\n", p.nik);
+    printf("Nama Lengkap     : %-40s\n", p.namaLengkap);
+    printf("Tempat/Tgl Lahir : %s, %02d-%02d-%04d\n",
+           p.tempatLahir,
+           p.tglLahir.hari,
+           p.tglLahir.bulan,
+           p.tglLahir.tahun);
+    printf("Jenis Kelamin    : %-20s\n", p.jenisKelamin);
+    printf("Alamat           : %-60s\n", p.alamat);
+    printf("RT / RW          : %02d / %02d\n", p.rt, p.rw);
+    printf("Agama            : %-20s\n", p.agama);
+    printf("Status Kawin     : %-20s\n", p.statusPerkawinan);
+    printf("Pekerjaan        : %-30s\n", p.pekerjaan);
+    printf("Status Warga     : %-20s\n", p.statusWarga);
+    printf("======================================================================================\n");
 
     jedaLayar();
 }
+
 
 void cariWarga() {
     // TODO: Tugas
@@ -85,63 +190,59 @@ void cariWarga() {
 }
 
 void editWarga() {
-    // TODO: Tugas
-    // 1. Minta input NIK yang mau diedit
-    char nik[17] = "";
-    printf("Masukkan NIK yang ingin diedit: ");
-    scanf("%s", nik);
-    
-    // 2. Cari index-nya
+    char nik[17];
     int index = -1;
+    int pilihan;
+    char buffer[100];
+
+    bersihkanLayar();
+    printf("================================= EDIT DATA WARGA ===================================\n");
+    printf("Masukkan NIK Warga: ");
+    scanf("%s", nik);
+    printf("--------------------------------------------------------------------------------------\n");
+
+    // Cari data
     for (int i = 0; i < jumlahWarga; i++) {
         if (strcmp(dataWarga[i].nik, nik) == 0) {
             index = i;
             break;
         }
     }
-    // 3. Tawarkan mau edit kolom apa (Nama/Alamat/Status)
+
     if (index == -1) {
-        printf("[KESALAHAN] NIK '%s' tidak ditemukan dalam database.\n", nik);
+        printf("[KESALAHAN] Data warga dengan NIK '%s' tidak ditemukan.\n", nik);
+        printf("======================================================================================\n");
         jedaLayar();
         return;
     }
-    printf("\nData Ditemukan:\n");
-    printf("----------------------------------------\n");
-    printf("Nama Lengkap : %s\n", dataWarga[index].namaLengkap);
-    printf("Alamat       : %s\n", dataWarga[index].alamat);
-    printf("Status Saat Ini: %s\n", dataWarga[index].statusWarga);
-    printf("----------------------------------------\n");
-    printf("\nPilih kolom yang ingin diedit:\n");
+
+    // Preview data
+    printf("DATA WARGA DITEMUKAN\n");
+    printf("--------------------------------------------------------------------------------------\n");
+    printf("NIK          : %-16s\n", dataWarga[index].nik);
+    printf("Nama Lengkap : %-40s\n", dataWarga[index].namaLengkap);
+    printf("Alamat       : %-60s\n", dataWarga[index].alamat);
+    printf("Status Warga : %-20s\n", dataWarga[index].statusWarga);
+    printf("--------------------------------------------------------------------------------------\n");
+
+    // Menu edit
+    printf("PILIH KOLOM YANG INGIN DIEDIT\n");
     printf("[1] Nama Lengkap\n");
     printf("[2] Alamat\n");
     printf("[3] Status Warga\n");
+    printf("[0] Batal\n");
     printf("Pilihan: ");
-    int pilihan;
     scanf("%d", &pilihan);
-    char buffer[100];
-    switch (pilihan) {
-        case 1:
-            printf("Masukkan Nama Lengkap baru: ");
-            scanf(" %[^\n]", buffer);
-            // strcpy(dataWarga[index].namaLengkap, buffer);
-            break;
-        case 2:
-            printf("Masukkan Alamat baru: ");
-            scanf(" %[^\n]", buffer);
-            // strcpy(dataWarga[index].alamat, buffer);
-            break;
-        case 3:
-            printf("Masukkan Status Warga baru: ");
-            scanf(" %[^\n]", buffer);
-            // strcpy(dataWarga[index].statusWarga, buffer);
-            break;
-        default:
-            printf("[KESALAHAN] Pilihan tidak valid.\n");
-            jedaLayar();
-            return;
+
+    if (pilihan == 0) {
+        printf("\n[INFO] Edit data dibatalkan.\n");
+        printf("======================================================================================\n");
+        jedaLayar();
+        return;
     }
 
-    // 4. Update data di array
+    printf("Masukkan nilai baru: ");
+    scanf(" %[^\n]", buffer);
 
     switch (pilihan) {
         case 1:
@@ -153,61 +254,71 @@ void editWarga() {
         case 3:
             strcpy(dataWarga[index].statusWarga, buffer);
             break;
+        default:
+            printf("\n[KESALAHAN] Pilihan tidak valid.\n");
+            printf("======================================================================================\n");
+            jedaLayar();
+            return;
     }
-    printf("\n[SUKSES] Data warga telah diperbarui.\n");
+
+    printf("\n[SUKSES] Data warga berhasil diperbarui.\n");
+    printf("======================================================================================\n");
     jedaLayar();
 }
 
 void hapusWarga() {
     char nik[17] = "";
-    char konfirmasi = 'N'; 
-    int index = -1; 
+    char konfirmasi;
+    int index = -1;
 
     bersihkanLayar();
-    printf("=== HAPUS DATA WARGA ===\n");
+    printf("================================= HAPUS DATA WARGA =================================\n");
     printf("Masukkan NIK Target: ");
     scanf("%s", nik);
+    printf("--------------------------------------------------------------------------------------\n");
 
-    // cari data warga dengan nik 
+    // Cari data warga
     for (int i = 0; i < jumlahWarga; i++) {
-        // cek apakah niknya terdaftar atau tidak
-        if (strcmp(nik, dataWarga[i].nik) == 0) {
+        if (strcmp(dataWarga[i].nik, nik) == 0) {
             index = i;
             break;
         }
     }
 
     if (index == -1) {
-        printf("[KESALAHAN] NIK '%s' tidak ditemukan dalam database.\n", nik);
-    } else {
-        printf("\n[INFO] Data Ditemukan:\n");
-        
-        // menampilkan detail warga
-        printf("----------------------------------------\n");
-        printf("Nama Lengkap : %s\n", dataWarga[index].namaLengkap);
-        printf("Alamat       : %s\n", dataWarga[index].alamat);
-        printf("Status Saat Ini: %s\n", dataWarga[index].statusWarga);
-        printf("----------------------------------------\n");
-        
-        printf("\n[PERINGATAN] Data yang dihapus tidak dapat dikembalikan.\n");
-        printf("Apakah Anda YAKIN ingin menghapus warga ini? (Y/N): ");
-        
-        scanf(" %c", &konfirmasi); 
-
-        // cek apakah user yakin ingin menghapus data warga tersebut
-        if (konfirmasi == 'Y' || konfirmasi == 'y') {
-            // Data index ke-i ditimpa oleh data index ke-i+1
-            for (int i = index; i < jumlahWarga - 1; i++) {
-                dataWarga[i] = dataWarga[i + 1];
-            }
-
-            jumlahWarga--; // Kurangi total warga
-            printf("\n[SUKSES] Data atas nama %s telah dihapus permanen.\n", dataWarga[index].namaLengkap);
-        } else {
-            printf("\n[INFO] Penghapusan dibatalkan.\n");
-        }
+        printf("[KESALAHAN] Data warga dengan NIK '%s' tidak ditemukan.\n", nik);
+        printf("======================================================================================\n");
+        jedaLayar();
+        return;
     }
 
+    Penduduk p = dataWarga[index];
+
+    // Tampilkan ringkasan data
+    printf("DATA WARGA DITEMUKAN\n");
+    printf("--------------------------------------------------------------------------------------\n");
+    printf("NIK          : %-16s\n", p.nik);
+    printf("Nama Lengkap : %-40s\n", p.namaLengkap);
+    printf("Alamat       : %-60s\n", p.alamat);
+    printf("Status Warga : %-20s\n", p.statusWarga);
+    printf("--------------------------------------------------------------------------------------\n");
+
+    printf("[PERINGATAN] Data yang dihapus tidak dapat dikembalikan.\n");
+    printf("Apakah Anda yakin ingin menghapus data ini? (Y/N): ");
+    scanf(" %c", &konfirmasi);
+
+    if (konfirmasi == 'Y' || konfirmasi == 'y') {
+        for (int i = index; i < jumlahWarga - 1; i++) {
+            dataWarga[i] = dataWarga[i + 1];
+        }
+
+        jumlahWarga--;
+        printf("\n[SUKSES] Data warga atas nama %-40s telah dihapus.\n", p.namaLengkap);
+    } else {
+        printf("\n[INFO] Penghapusan data dibatalkan oleh pengguna.\n");
+    }
+
+    printf("======================================================================================\n");
     jedaLayar();
 }
 
@@ -222,31 +333,35 @@ int cekNIKTerdaftar(char* nikCek) {
 }
 
 void menuDataWarga() {
-  int pilihan;
+    int pilihan;
 
-  do {
-    bersihkanLayar();
+    do {
+        bersihkanLayar();
+        printf("================================ MENU KELOLA DATA WARGA ================================\n");
+        printf("[1] Tambah Warga Baru\n");
+        printf("[2] Lihat Daftar Warga\n");
+        printf("[3] Cari & Detail Warga\n");
+        printf("[4] Edit Data Warga\n");
+        printf("[5] Hapus Warga\n");
+        printf("[0] Kembali ke Menu Utama\n");
+        printf("--------------------------------------------------------------------------------------\n");
+        printf("Pilihan: ");
 
-    printf("=== MENU KELOLA DATA WARGA ===\n");
-    printf("[1] Tambah Warga Baru\n");
-    printf("[2] Lihat Daftar Warga\n");
-    printf("[3] Cari & Detail Warga\n");
-    printf("[4] Edit Data Warga\n");
-    printf("[5] Hapus Warga\n");
-    printf("[0] Kembali ke Menu Utama\n");   
-    printf("------------------------------\n");
-    printf("Pilihan: ");
+        scanf("%d", &pilihan);
 
-    scanf("%d", &pilihan);
-
-    switch (pilihan) {
-        case 1: tambahWarga(); break;
-        case 2: lihatDaftarWarga(); break;
-        case 3: cariWarga(); break;
-        case 4: editWarga(); break;
-        case 5: hapusWarga(); break;
-        case 0: printf("Kembali ke menu utama...\n"); break;
-        default: printf("Input salah!\n"); jedaLayar();       
-    }
+        switch (pilihan) {
+            case 1: tambahWarga(); break;
+            case 2: lihatDaftarWarga(); break;
+            case 3: cariWarga(); break;
+            case 4: editWarga(); break;
+            case 5: hapusWarga(); break;
+            case 0:
+                printf("\n[INFO] Kembali ke menu utama...\n");
+                jedaLayar();
+                break;
+            default:
+                printf("\n[KESALAHAN] Pilihan menu tidak valid.\n");
+                jedaLayar();
+        }
     } while (pilihan != 0);
 }
