@@ -43,7 +43,7 @@ void bayarRetribusi() {
 
     // Cegah pembayaran ganda
     for (int i = 0; i < jumlahTransaksi; i++) {
-        if (strcmp(dataTransaksi[i].nik, nikCari) == 0) {
+        if (strcmp(dataTransaksi[i].nikPembayar, nikCari) == 0) {
             printf("Warga ini sudah membayar retribusi.\n");
             jedaLayar();
             return;
@@ -51,10 +51,10 @@ void bayarRetribusi() {
     }
 
     // Simpan transaksi
-    strcpy(dataTransaksi[jumlahTransaksi].nik, nikCari);
+    strcpy(dataTransaksi[jumlahTransaksi].nikPembayar, nikCari);
 
     printf("Jenis Retribusi (Kebersihan/Keamanan): ");
-    scanf("%19s", dataTransaksi[jumlahTransaksi].jenis);
+    scanf("%19s", dataTransaksi[jumlahTransaksi].jenisRetribusi);
 
     printf("Nominal: ");
     scanf("%d", &dataTransaksi[jumlahTransaksi].nominal);
@@ -84,7 +84,7 @@ void laporanTunggakan() {
     for (int i = 0; i < jumlahWarga; i++) {
         sudahBayar = 0;
         for (int j = 0; j < jumlahTransaksi; j++) {
-            if (strcmp(dataWarga[i].nik, dataTransaksi[j].nik) == 0) {
+            if (strcmp(dataWarga[i].nik, dataTransaksi[j].nikPembayar) == 0) {
                 sudahBayar = 1;
                 break;
             }
@@ -98,7 +98,7 @@ void laporanTunggakan() {
     Penduduk temp;
     for (int i = 0; i < jumlahPenunggak - 1; i++) {
         for (int j = 0; j < jumlahPenunggak - i - 1; j++) {
-            if (strcmp(penunggak[j].nama, penunggak[j + 1].nama) > 0) {
+            if (strcmp(penunggak[j].namaLengkap, penunggak[j + 1].namaLengkap) > 0) {
                 temp = penunggak[j];
                 penunggak[j] = penunggak[j + 1];
                 penunggak[j + 1] = temp;
@@ -112,7 +112,7 @@ void laporanTunggakan() {
     for (int i = 0; i < jumlahPenunggak; i++) {
         printf("%-16s %-15s %d\n",
                penunggak[i].nik,
-               penunggak[i].nama,
+               penunggak[i].namaLengkap,
                penunggak[i].rt);
     }
 
@@ -135,8 +135,8 @@ void riwayatTransaksi() {
     for (int i = 0; i < jumlahTransaksi; i++) {
         printf("%-3d %-16s %-12s %d\n",
                i + 1,
-               dataTransaksi[i].nik,
-               dataTransaksi[i].jenis,
+               dataTransaksi[i].nikPembayar,
+               dataTransaksi[i].jenisRetribusi,
                dataTransaksi[i].nominal);
         total += dataTransaksi[i].nominal;
     }
