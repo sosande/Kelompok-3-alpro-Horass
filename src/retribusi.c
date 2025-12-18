@@ -9,9 +9,9 @@ extern int jumlahWarga;
 extern Transaksi dataTransaksi[MAX_TRANSAKSI];
 extern int jumlahTransaksi;
 
-/* ==============================
+/* 
    BAYAR RETRIBUSI
-============================== */
+*/
 void bayarRetribusi() {
     char nikCari[20];
     int ditemukan = -1;
@@ -71,10 +71,10 @@ void bayarRetribusi() {
     jedaLayar();
 }
 
-/* ==============================
+/* 
    LAPORAN TUNGGAKAN
    Asumsi: Berlaku untuk satu periode aktif
-============================== */
+  */
 void laporanTunggakan() {
     Penduduk penunggak[MAX_WARGA];
     int jumlahPenunggak = 0;
@@ -123,9 +123,9 @@ void laporanTunggakan() {
     jedaLayar();
 }
 
-/* ==============================
+/* 
    RIWAYAT TRANSAKSI
-============================== */
+  */
 void riwayatTransaksi() {
     int total = 0;
 
@@ -147,9 +147,9 @@ void riwayatTransaksi() {
     jedaLayar();
 }
 
-/* ==============================
+/*  
    MENU RETRIBUSI
-============================== */
+  */
 void menuRetribusi() {
     int pilihan;
     do {
