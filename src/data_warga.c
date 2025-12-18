@@ -32,10 +32,16 @@ void tambahWarga() {
     scanf("%s", p.nik);
 
     // 3. Validasi NIK
+    char str[16];
+    sprintf(str[16], "%d", p.nik);
+    int count = strlen(str);
+
     if (cekNIKTerdaftar(p.nik)) {
         printf("[KESALAHAN] NIK sudah terdaftar.\n");
         jedaLayar();
         return;
+    } else if (count != 16) {
+        printf("[KESALAHAN] NIK harus 16 digit");
     }
 
     // Input data lainnya
