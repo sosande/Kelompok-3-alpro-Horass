@@ -42,6 +42,8 @@ void tambahWarga() {
         return;
     } else if (count != 16) {
         printf("[KESALAHAN] NIK harus 16 digit");
+        jedaLayar();
+        return;
     }
 
     // Input data lainnya
