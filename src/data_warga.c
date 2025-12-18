@@ -8,16 +8,16 @@
 extern Penduduk dataWarga[MAX_WARGA];
 extern int jumlahWarga;
 
-// void tambahWarga() {
-//     // TODO: Tugas 
-//     // 1. Cek apakah database penuh?
-//     // 2. Input NIK, Nama, dll.
-//     // 3. Validasi NIK (panggil fungsi cekNIKTerdaftar)
-//     // 4. Simpan ke array dataWarga
-//
-//     printf("\n[DEV] Fitur Tambah Warga belum diisi logikanya.\n");
-//     jedaLayar();
-// }
+void tambahWarga() {
+    // TODO: Tugas 
+    // 1. Cek apakah database penuh?
+    // 2. Input NIK, Nama, dll.
+    // 3. Validasi NIK (panggil fungsi cekNIKTerdaftar)
+    // 4. Simpan ke array dataWarga
+
+    printf("\n[DEV] Fitur Tambah Warga belum diisi logikanya.\n");
+    jedaLayar();
+}
 
 void lihatDaftarWarga() {
     // TODO: Tugas
@@ -44,7 +44,7 @@ void detailWarga(char* nik) {
         printf("\n=== DETAIL WARGA ===\n");
         printf("NIK              : %s\n", p.nik);
         printf("Nama Lengkap     : %s\n", p.namaLengkap);
-        printf("Tempat, Tgl Lahir: %s, %02d-%02d-%04d\n", p.tempatLahir, p.tglLahir.tanggal, p.tglLahir.bulan, p.tglLahir.tahun);
+        printf("Tempat, Tgl Lahir: %s, %02d-%02d-%04d\n", p.tempatLahir, p.tglLahir.hari, p.tglLahir.bulan, p.tglLahir.tahun);
         printf("Jenis Kelamin    : %s\n", p.jenisKelamin);
         printf("Alamat           : %s\n", p.alamat);
         printf("RT/RW            : %d/%d\n", p.rt, p.rw);
@@ -204,7 +204,7 @@ void hapusWarga() {
             }
 
             jumlahWarga--; // Kurangi total warga
-            printf("\n[SUKSES] Data atas nama %s telah dihapus permanen.\n", dataWarga[i].nama);
+            printf("\n[SUKSES] Data atas nama %s telah dihapus permanen.\n", dataWarga[index].namaLengkap);
         } else {
             printf("\n[INFO] Penghapusan dibatalkan.\n");
         }
