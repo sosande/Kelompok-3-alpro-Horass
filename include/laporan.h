@@ -4,5 +4,6 @@
 void menuLaporan();
 void statistikWarga();   // jumlah L/P, dll
 void rekapKeuangan();    // total pemasukan
+void laporanDataWarga(); // daftar warga lengkap, filter, ekspor
 
 #endif
