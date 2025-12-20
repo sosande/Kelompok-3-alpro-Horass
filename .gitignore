@@ -1,7 +1,7 @@
 # file hasil kompilasi
 *.o
 *.exe
-./aplikasi_kelurahan
+aplikasi_kelurahan
 
 #file data
 data/*.dat
