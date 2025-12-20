@@ -11,19 +11,18 @@ extern Transaksi dataTransaksi[MAX_TRANSAKSI];
 extern int jumlahTransaksi;
 
 void statistikWarga() {
-    int laki = 0, perempuan = 0, kk = 0;
+    int laki = 0, perempuan = 0;
     for(int i = 0; i < jumlahWarga; i++){
         if(strcmp(dataWarga[i].jenisKelamin, "Laki-laki") == 0){
             laki++;
         } else if(strcmp(dataWarga[i].jenisKelamin, "Perempuan") == 0){
             perempuan++;
         }
-        kk++;
     }
     printf("\n=== STATISTIK KEPENDUDUKAN ===\n");
     printf("Jumlah Laki-laki: %d\n", laki);
     printf("Jumlah Perempuan: %d\n", perempuan);
-    printf("Jumlah Kartu Keluarga: %d\n", kk);
+    printf("Jumlah Penduduk: %d\n", jumlahWarga);
     jedaLayar();
 }
 

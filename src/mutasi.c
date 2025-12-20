@@ -4,157 +4,201 @@
 #include "../include/utils.h"
 #include "../include/mutasi.h"
 
-// akses data warga untuk mengubah status
 extern Penduduk dataWarga[MAX_WARGA];
 extern int jumlahWarga;
-// akses data mutasi untuk mencatat log mutasi
 extern Mutasi dataMutasi[MAX_MUTASI];
 extern int jumlahMutasi;
 
-/* =====================================================
-   PINDAH DATANG (WARGA MASUK)
-   - Tambah data warga baru
-   - Status otomatis "Aktif"
-   - Catat ke log mutasi sebagai "Masuk"
-   ===================================================== */
+// Helper: Cek apakah NIK sudah dipakai
+int cekNIKDuplikat(char* nik) {
+    for (int i = 0; i < jumlahWarga; i++) {
+        if (strcmp(dataWarga[i].nik, nik) == 0) return 1;
+    }
+    return 0;
+}
 
-void pindahDatang() { // Warga masuk (tambah warga + log mutasi)
-    // TODO: Tugas
-    // Ini mirip tambahWarga(), tapi catat juga ke dataMutasi sebagai "Masuk"
+void pindahDatang() { 
     Penduduk p;
     Mutasi m;
 
-    //input data warga
-    printf ("tanggal pindah datang (dd-mm-yy): ");
-    scanf ("%d-%d-%d", &m.tglKejadian.hari, &m.tglKejadian.bulan, &m.tglKejadian.tahun);
+    bersihkanLayar();
+    printf("=== INPUT WARGA PINDAH DATANG ===\n");
+
+    // 1. DATA MUTASI
+    printf("Tanggal Pindah (DD MM YYYY): ");
+    scanf("%d %d %d", &m.tglKejadian.hari, &m.tglKejadian.bulan, &m.tglKejadian.tahun);
     
-    printf("masukan NIK : ");
-    scanf ("%s", m.nikTerkait);
+    // 2. DATA WARGA
+    printf("Masukan NIK : ");
+    scanf("%s", p.nik);
 
-    printf("masukan nama : ");
-    scanf (" %[^\n]", p.namaLengkap);
+    // Validasi 16 Digit
+    if (strlen(p.nik) != 16) {
+        printf("[KESALAHAN] NIK harus 16 digit!\n");
+        jedaLayar();
+        return;
+    }
 
-    // set status awal
-    strcpy (p.statusWarga, "Aktif");
-    //simpan ke array dataWarga
+    // Validasi Duplikat 
+    if (cekNIKDuplikat(p.nik)) {
+        printf("[KESALAHAN] NIK sudah terdaftar!\n");
+        jedaLayar();
+        return;
+    }
+
+    printf("Masukan Nama : ");
+    scanf(" %[^\n]", p.namaLengkap);
+
+    printf("Tempat Lahir : ");
+    scanf(" %[^\n]", p.tempatLahir);
+
+    printf("Tanggal Lahir (DD MM YYYY) : ");
+    scanf("%d %d %d", &p.tglLahir.hari, &p.tglLahir.bulan, &p.tglLahir.tahun);
+
+    printf("Jenis Kelamin (L/P) : ");
+    scanf("%s", p.jenisKelamin);
+
+    printf("Alamat : ");
+    scanf(" %[^\n]", p.alamat);
+
+    printf("RT / RW : ");
+    scanf("%d / %d", &p.rt, &p.rw);
+
+    printf("Agama : ");
+    scanf(" %[^\n]", p.agama);
+
+    printf("Pekerjaan : ");
+    scanf(" %[^\n]", p.pekerjaan);
+
+    printf("Status Kawin : ");
+    scanf(" %[^\n]", p.statusPerkawinan);
+
+    // Set status default
+    strcpy(p.statusWarga, "Aktif");
+
+    // Simpan ke Array Warga
     dataWarga[jumlahWarga] = p;
-    jumlahWarga++;  // jumlah warga bertambah
+    jumlahWarga++;
 
-    //catat ke log mutasi
-    strcpy (dataMutasi[jumlahMutasi].nikTerkait, m.nikTerkait);
-    strcpy (dataMutasi[jumlahMutasi].jenisMutasi, "Pindah Datang");
-    strcpy (dataMutasi[jumlahMutasi].alasan, "Warga pindah datang");
+    // Simpan ke Log Mutasi
+    strcpy(dataMutasi[jumlahMutasi].nikTerkait, p.nik);
+    strcpy(dataMutasi[jumlahMutasi].jenisMutasi, "Pindah Datang");
+    strcpy(dataMutasi[jumlahMutasi].alasan, "Warga Pindah Datang");
+    dataMutasi[jumlahMutasi].tglKejadian = m.tglKejadian;
     
-    jumlahMutasi++; // jumlah mutasi bertambah
+    jumlahMutasi++;
 
-    printf("\n warga baru berhasil ditmbahkan\n");
+    printf("\n[SUKSES] Warga baru berhasil ditambahkan.\n");
     jedaLayar();
 }
 
 void pindahKeluar() {
-    // TODO: Tugas
-    // 1. Cari NIK
-    // 2. Ubah dataWarga[i].statusWarga jadi "Pindah"
-    // 3. Catat alasan dan tujuan ke dataMutasi
-
     char nikTerkait[17];
-    int ditemukan = 0;
+    int index = -1;
 
-    printf ("Masukan NIK : ");
-    scanf ("%s", nikTerkait);
+    bersihkanLayar();
+    printf("=== INPUT PINDAH KELUAR ===\n");
+    printf("Masukan NIK : ");
+    scanf("%s", nikTerkait);
 
+    // Cari NIK
     for (int i = 0; i < jumlahWarga; i++) {
         if (strcmp(dataWarga[i].nik, nikTerkait) == 0) {
-            //ubah status warga
-            strcpy (dataWarga[i].statusWarga, "Pindah");
-
-            //catat ke log mutasi
-            strcpy (dataMutasi[jumlahMutasi].nikTerkait, nikTerkait);
-            strcpy (dataMutasi[jumlahMutasi].jenisMutasi, "Pindah Keluar");
-
-            printf ("Alasan pindah : ");
-            scanf (" %[^\n]", dataMutasi[jumlahMutasi].alasan);
-
-            jumlahMutasi++; // tambah jumlah mutasi
-            ditemukan = 1;  // tandai bahwa data ditemukan
-
-            printf ("\n data pindah keluar berhasil dicatat\n");
-            break; // keluar dari loop
+            index = i;
+            break;
         }
     }
-// jika NIK tidak ditemukan
-    if (ditemukan == 0) {
-        printf ("NIK tidak ditemukan\n");
+
+    if (index == -1) {
+        printf("[KESALAHAN] NIK tidak ditemukan.\n");
+    } else {
+        // Tampilkan nama biar yakin
+        printf("Ditemukan: %s\n", dataWarga[index].namaLengkap);
+        
+        // Update Status Warga
+        strcpy(dataWarga[index].statusWarga, "Pindah");
+
+        // Catat Log Mutasi
+        strcpy(dataMutasi[jumlahMutasi].nikTerkait, nikTerkait);
+        strcpy(dataMutasi[jumlahMutasi].jenisMutasi, "Pindah Keluar");
+
+        printf("Tanggal Pindah (DD MM YYYY) : ");
+        scanf("%d %d %d", &dataMutasi[jumlahMutasi].tglKejadian.hari, &dataMutasi[jumlahMutasi].tglKejadian.bulan, &dataMutasi[jumlahMutasi].tglKejadian.tahun);
+
+        printf("Alasan pindah : ");
+        scanf(" %[^\n]", dataMutasi[jumlahMutasi].alasan);
+
+        jumlahMutasi++;
+        printf("\n[SUKSES] Data pindah keluar berhasil dicatat.\n");
     }
 
     jedaLayar();
 }
 
 void laporKematian() {
-    // TODO: Tugas
-    // 1. Cari NIK
-    // 2. Ubah dataWarga[i].statusWarga jadi "Meninggal"
-    // 3. Catat tanggal kematian ke dataMutasi
-
     char nikTerkait[17];
-    int ditemukan = 0;
+    int index = -1;
 
-    printf ("Masukan NIK : ");
-    scanf ("%s", nikTerkait);
+    bersihkanLayar();
+    printf("=== LAPOR KEMATIAN ===\n");
+    printf("Masukan NIK : ");
+    scanf("%s", nikTerkait);
 
     for (int i = 0; i < jumlahWarga; i++) {
         if (strcmp(dataWarga[i].nik, nikTerkait) == 0) {
-            //ubah status warga
-            strcpy (dataWarga[i].statusWarga, "Meninggal");
-
-            //catat ke log mutasi
-            strcpy (dataMutasi[jumlahMutasi].nikTerkait, nikTerkait);
-            strcpy (dataMutasi[jumlahMutasi].jenisMutasi, "Kematian");
-
-            printf ("Tanggal kematian (dd-mm-yy): ");
-            scanf ("%d-%d-%d", &dataMutasi[jumlahMutasi].tglKejadian.hari,
-                               &dataMutasi[jumlahMutasi].tglKejadian.bulan,
-                               &dataMutasi[jumlahMutasi].tglKejadian.tahun);
-
-            strcpy (dataMutasi[jumlahMutasi].alasan, "Warga meninggal dunia");
-
-            jumlahMutasi++; // tambah jumlah mutasi
-            ditemukan = 1;  // tandai bahwa data ditemukan
-
-            printf ("\n data kematian berhasil dicatat\n");
-            break; // keluar dari loop
+            index = i;
+            break;
         }
     }
-    // jika NIK tidak ditemukan
-    if (ditemukan == 0) {
-        printf ("NIK tidak ditemukan\n");
+
+    if (index == -1) {
+        printf("[KESALAHAN] NIK tidak ditemukan.\n");
+    } else {
+        printf("Ditemukan: %s\n", dataWarga[index].namaLengkap);
+
+        // Update Status
+        strcpy(dataWarga[index].statusWarga, "Meninggal");
+
+        // Catat Log
+        strcpy(dataMutasi[jumlahMutasi].nikTerkait, nikTerkait);
+        strcpy(dataMutasi[jumlahMutasi].jenisMutasi, "Kematian");
+        strcpy(dataMutasi[jumlahMutasi].alasan, "Meninggal Dunia");
+
+        printf("Tanggal Kematian (DD MM YYYY): ");
+        scanf("%d %d %d", &dataMutasi[jumlahMutasi].tglKejadian.hari,
+                          &dataMutasi[jumlahMutasi].tglKejadian.bulan,
+                          &dataMutasi[jumlahMutasi].tglKejadian.tahun);
+
+        jumlahMutasi++;
+        printf("\n[SUKSES] Data kematian berhasil dicatat.\n");
     }
 
     jedaLayar();
 }
 
 void lihatLogMutasi() {
-    // Tampilkan tabel mutasi
+    bersihkanLayar();
+    printf("=== LOG MUTASI ===\n");
 
-    printf ("\n=== LOG MUTASI ===\n");
-
-        if (jumlahMutasi == 0) {
-            printf ("Belum ada data mutasi.\n");
-        } else {
-            for (int i = 0; i < jumlahMutasi; i++) {
-                printf ("%d. %s | %s | %02d-%02d-%d\n",
-                    i + 1,
-                    dataMutasi[i].nikTerkait,
-                    dataMutasi[i].jenisMutasi,
-                    dataMutasi[i].tglKejadian.hari,
-                    dataMutasi[i].tglKejadian.bulan,
-                    dataMutasi[i].tglKejadian.tahun
-                );
-                printf ("    Alasan: %s\n", dataMutasi[i].alasan);
-
-            }
-        }
+    if (jumlahMutasi == 0) {
+        printf("Belum ada data mutasi.\n");
+    } else {
+        // Header simpel
+        printf("%-3s | %-16s | %-15s | %-12s | %s\n", "NO", "NIK", "JENIS", "TANGGAL", "ALASAN");
+        printf("----------------------------------------------------------------------\n");
         
+        for (int i = 0; i < jumlahMutasi; i++) {
+            printf("%-3d | %-16s | %-15s | %02d-%02d-%04d | %s\n",
+                i + 1,
+                dataMutasi[i].nikTerkait,
+                dataMutasi[i].jenisMutasi,
+                dataMutasi[i].tglKejadian.hari,
+                dataMutasi[i].tglKejadian.bulan,
+                dataMutasi[i].tglKejadian.tahun,
+                dataMutasi[i].alasan
+            );
+        }
+    }
     jedaLayar();
 }
 
@@ -163,7 +207,7 @@ void menuMutasi() {
     do {
         bersihkanLayar();
         printf("=== MENU MUTASI PENDUDUK ===\n");
-        printf("[1] Warga Pindah Datang (Masuk)\n");
+        printf("[1] Warga Pindah Datang\n");
         printf("[2] Warga Pindah Keluar\n");
         printf("[3] Lapor Kematian\n");
         printf("[4] Lihat Log Mutasi\n");
