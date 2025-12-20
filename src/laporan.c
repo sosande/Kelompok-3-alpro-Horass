@@ -9,6 +9,8 @@ extern Penduduk dataWarga[MAX_WARGA];
 extern int jumlahWarga;
 extern Transaksi dataTransaksi[MAX_TRANSAKSI];
 extern int jumlahTransaksi;
+extern Mutasi dataMutasi[MAX_MUTASI];
+extern int jumlahMutasi;
 
 void statistikWarga() {
     int laki = 0, perempuan = 0, kk = 0;
@@ -87,6 +89,26 @@ void eksporKeFile() {
     jedaLayar();
 }
 
+void tampilkanTabelMutasi() {
+    printf("\n=== DAFTAR MUTASI PENDUDUK ===\n");
+    if (jumlahMutasi == 0) {
+        printf("Tidak ada data mutasi.\n");
+        return;
+    }
+    printf("%-20s %-17s %-15s %-10s %-15s\n", "Kode Mutasi", "NIK", "Jenis Mutasi", "Tanggal", "Alasan");
+    printf("-------------------------------------------------------------------------------\n");
+    for(int i = 0; i < jumlahMutasi; i++){
+        printf("%-20s %-17s %-15s %02d-%02d-%04d %-15s\n", 
+               dataMutasi[i].kodeMutasi, 
+               dataMutasi[i].nikTerkait, 
+               dataMutasi[i].jenisMutasi, 
+               dataMutasi[i].tglKejadian.hari, 
+               dataMutasi[i].tglKejadian.bulan, 
+               dataMutasi[i].tglKejadian.tahun, 
+               dataMutasi[i].alasan);
+    }
+}
+
 void laporanDataWarga() {
     int pilihan;
     do {
@@ -115,6 +137,7 @@ void menuLaporan() {
         printf("[1] Statistik Kependudukan\n");
         printf("[2] Rekap Keuangan Desa\n");
         printf("[3] Laporan Data Warga\n");
+        printf("[4] Laporan Mutasi Penduduk\n");
         printf("[0] Kembali\n");
         printf("Pilihan: ");
         scanf("%d", &pilihan);
@@ -123,6 +146,7 @@ void menuLaporan() {
             case 1: statistikWarga(); break;
             case 2: rekapKeuangan(); break;
             case 3: laporanDataWarga(); break;
+            case 4: tampilkanTabelMutasi(); jedaLayar(); break;
             case 0: break;
             default: printf("Salah input!\n"); jedaLayar();
         }
