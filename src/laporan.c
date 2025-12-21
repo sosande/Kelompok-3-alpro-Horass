@@ -138,6 +138,7 @@ void menuLaporan() {
         printf("[3] Laporan Data Warga\n");
         printf("[4] Laporan Mutasi Penduduk\n");
         printf("[0] Kembali\n");
+        printf("--------------------------------\n");
         printf("Pilihan: ");
         scanf("%d", &pilihan);
 
