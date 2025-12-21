@@ -1,0 +1,1612 @@
+==================================================
+NAMA FILE: include/data_warga.h
+==================================================
+#ifndef DATA_WARGA_H
+#define DATA_WARGA_H
+
+// untuk menavigasi menu
+void menuDataWarga();
+
+// menambah data warga
+void tambahWarga();
+
+void lihatDaftarWarga();      // Tampilan tabel (singkat)
+void detailWarga(char* nik);  // Tampilan lengkap (detail satu orang)
+void cariWarga();             // Fitur pencarian
+
+// fungsi untuk mengubah data warga
+void editWarga();
+
+// fungsi untuk menghapus data warga
+void hapusWarga();
+
+// 6. Helper / Validasi (Fungsi pembantu)
+// Mengembalikan 1 jika NIK ada, 0 jika belum ada
+int cekNIKTerdaftar(char* nikCek);
+
+#endif 
+
+
+
+==================================================
+NAMA FILE: include/file_handler.h
+==================================================
+#ifndef FILE_HANDLER_H 
+#define FILE_HANDLER_H
+
+// Fungsi untuk memuat semua data
+void muatData();
+
+// Fungsi untuk menyimpan semua data
+void simpanData();
+
+#endif
+
+
+
+==================================================
+NAMA FILE: include/laporan.h
+==================================================
+#ifndef LAPORAN_H
+#define LAPORAN_H
+
+void menuLaporan();
+void statistikWarga();   // jumlah L/P, dll
+void rekapKeuangan();    // total pemasukan
+void laporanDataWarga(); // daftar warga lengkap & ekspor
+#endif
+
+
+
+==================================================
+NAMA FILE: include/layanan_surat.h
+==================================================
+#ifndef LAYANAN_SURAT_H
+#define LAYANAN_SURAT_H
+
+#include "structs.h"
+
+// Menu navigasi 
+void menuLayananSurat();
+
+// Buat Surat
+void buatSuratBaru();
+
+// mencari data pemohon berdasarkan nik 
+int cariDataPemohon(char* nik);
+
+// generate surat menjadi file txt 
+void cetakSurat(int indexWarga, char* jenisSurat, char* keperluan);
+
+// Fitur Lihat riwayat surat
+void lihatRiwayatSurat();
+
+#endif
+
+
+
+==================================================
+NAMA FILE: include/mutasi.h
+==================================================
+#ifndef MUTASI_H
+#define MUTASI_H
+
+#include "structs.h"
+
+void menuMutasi();
+void pindahDatang();  // Warga masuk (tambah warga + log mutasi)
+void pindahKeluar();  // Warga keluar (ubah status jadi "Pindah" + log)
+void laporKematian(); // Warga meninggal (ubah status jadi "Meninggal" + log)
+void lihatLogMutasi();
+
+#endif
+
+
+
+==================================================
+NAMA FILE: include/retribusi.h
+==================================================
+#ifndef RETRIBUSI_H
+#define RETRIBUSI_H
+
+#include "structs.h"
+
+// Menu navigasi Retribusi
+void menuRetribusi();
+
+// Bayar Retribusi (Tambah data transaksi)
+void bayarRetribusi();
+
+// Laporan Penunggak 
+// Menampilkan warga yang belum bayar, diurutkan berdasarkan RT/RW
+void laporanTunggakan();
+
+// 3. Lihat History Transaksi
+void riwayatTransaksi();
+
+#endif
+
+
+
+==================================================
+NAMA FILE: include/structs.h
+==================================================
+#ifndef STRUCTS_H
+#define STRUCTS_H
+
+// batas maksimal data
+#define MAX_WARGA 1000 // bisa simpan maksimal 1000 penduduk
+#define MAX_SURAT 500 // bisa simpan maksimal 500 surat
+#define MAX_TRANSAKSI 2000 // bisa simpan maksimal 2000 pembayaran
+#define MAX_MUTASI 100 // bisa simpan maksimal 100 data mutasi
+                       
+// membuat tipe data Tanggal menggunakan struct
+typedef struct {
+  int hari;
+  int bulan;
+  int tahun;
+} Tanggal;
+
+// struct Penduduk
+typedef struct {
+  char nik[17];            // Primary Key 
+  char namaLengkap[100];
+  char tempatLahir[50];
+  Tanggal tglLahir;        // Menggunakan struct Tanggal di atas
+  char jenisKelamin[20];   // "Laki-laki" atau "Perempuan"
+  char alamat[255];
+  int rt;
+  int rw;
+  char agama[20];
+  char statusPerkawinan[20];    // "Kawin", "Belum Kawin", "Cerai"
+  char pekerjaan[50];
+  char statusWarga[20];
+} Penduduk;
+
+// struct layanan surat
+typedef struct {
+    char kodeSurat[20];      // primary key 
+    char nikPemohon[17];     // foreign key 
+    char jenisSurat[50];     // "Surat Pengantar", "SKCK", dll
+    char keperluan[100];     
+    Tanggal tglDibuat;       
+    char namaPetugas[50]; // petugas yang melayani
+    char namaFile[50];       // nama file surat
+} RiwayatSurat;
+
+// struct transaksi retribusi
+typedef struct {
+    char kodeTransaksi[20];  // primary key 
+    char nikPembayar[17];    // foreign key 
+    char jenisRetribusi[50]; // "Uang Kebersihan", "Keamanan"
+    long nominal;       
+    int periodeBulan;        // bayar untuk bulan ke (1-12)
+    int periodeTahun;        
+    Tanggal tglBayar;        
+    char status[20];         // "Lunas" / "Belum bayar"
+} Transaksi;
+
+// struct data mutasi
+typedef struct {
+    char kodeMutasi[20]; // primary key
+    char nikTerkait[17]; // foreign key
+    char jenisMutasi[30];    // "Pindah Datang", "Pindah Keluar", "Kematian"
+    Tanggal tglKejadian;
+    char alasan[100];        
+    char alamatBaru[255];    // Diisi jika pindah keluar
+} Mutasi;
+
+#endif
+
+
+
+==================================================
+NAMA FILE: include/utils.h
+==================================================
+#ifndef UTILS_H
+#define UTILS_H
+
+#include <stdlib.h>
+#include <stdio.h>
+
+// Fungsi untuk membersihkan layar
+static void bersihkanLayar() {
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+}
+
+// Fungsi untuk menjeda layar
+static void jedaLayar() {
+    printf("\n\nTekan Enter untuk melanjutkan...");
+    getchar(); getchar(); 
+}
+
+#endif 
+
+
+
+==================================================
+NAMA FILE: src/data_warga.c
+==================================================
+#include <stdio.h>
+#include <string.h>
+#include "../include/structs.h"
+#include "../include/utils.h" 
+#include "../include/data_warga.h"
+
+// ambil data variable dari file main.c 
+extern Penduduk dataWarga[MAX_WARGA];
+extern int jumlahWarga;
+
+void tambahWarga() {
+   Penduduk p;
+
+    // 1. Cek apakah database penuh
+    if (jumlahWarga >= MAX_WARGA) {
+        printf("[KESALAHAN] Database warga sudah penuh.\n");
+        jedaLayar();
+        return;
+    }
+
+    bersihkanLayar();
+    printf("=== TAMBAH DATA WARGA BARU ===\n");
+
+    // 2. Input NIK
+    printf("NIK (16 digit): ");
+    scanf("%s", p.nik);
+
+    // 3. Validasi NIK
+    char str[16];
+    sprintf(str, "%s", p.nik);
+    int count = strlen(str);
+
+    if (cekNIKTerdaftar(p.nik)) {
+        printf("[KESALAHAN] NIK sudah terdaftar.\n");
+        jedaLayar();
+        return;
+    } else if (count != 16) {
+        printf("[KESALAHAN] NIK harus 16 digit");
+        jedaLayar();
+        return;
+    }
+
+    // Input data lainnya
+    printf("Nama Lengkap        : ");
+    scanf(" %[^\n]", p.namaLengkap);
+
+    printf("Tempat Lahir        : ");
+    scanf(" %[^\n]", p.tempatLahir);
+
+    printf("Tanggal Lahir (DD MM YYYY): ");
+    scanf("%d %d %d", 
+          &p.tglLahir.hari, 
+          &p.tglLahir.bulan, 
+          &p.tglLahir.tahun);
+
+    printf("Jenis Kelamin       : ");
+    scanf(" %[^\n]", p.jenisKelamin);
+
+    printf("Alamat              : ");
+    scanf(" %[^\n]", p.alamat);
+
+    printf("RT                  : ");
+    scanf("%d", &p.rt);
+
+    printf("RW                  : ");
+    scanf("%d", &p.rw);
+
+    printf("Agama               : ");
+    scanf(" %[^\n]", p.agama);
+
+    printf("Status Perkawinan   : ");
+    scanf(" %[^\n]", p.statusPerkawinan);
+
+    printf("Pekerjaan           : ");
+    scanf(" %[^\n]", p.pekerjaan);
+
+    // warga otomatis aktif
+    strcpy(p.statusWarga, "Aktif");
+
+    // 4. Simpan ke array
+    dataWarga[jumlahWarga] = p;
+    jumlahWarga++;
+
+    printf("\n[SUKSES] Data warga berhasil ditambahkan.\n");
+    jedaLayar();
+}
+
+void lihatDaftarWarga() {
+    bersihkanLayar();
+    printf("=== DAFTAR DATA WARGA ===\n");
+
+    if (jumlahWarga == 0) {
+        printf("[INFO] Belum ada data warga.\n");
+        jedaLayar();
+        return;
+    }
+
+    printf("----------------------------------------------------------------------------------------------------\n");
+    printf("| %-3s | %-16s | %-20s | %-12s | %-15s | %-10s |\n",
+           "No", "NIK", "Nama", "Kelamin", "Pekerjaan", "Status");
+    printf("----------------------------------------------------------------------------------------------------\n");
+
+    for (int i = 0; i < jumlahWarga; i++) {
+        printf("| %-3d | %-16s | %-20s | %-12s | %-15s | %-10s |\n",
+               i + 1,
+               dataWarga[i].nik,
+               dataWarga[i].namaLengkap,
+               dataWarga[i].jenisKelamin,
+               dataWarga[i].pekerjaan,
+               dataWarga[i].statusWarga);
+    }
+
+    printf("----------------------------------------------------------------------------------------------------\n");
+    printf("Total Warga: %d orang\n", jumlahWarga);
+
+    jedaLayar();
+}
+
+void detailWarga(char* nik) {
+    int index = -1;
+
+    // Cari index warga berdasarkan NIK
+    for (int i = 0; i < jumlahWarga; i++) {
+        if (strcmp(dataWarga[i].nik, nik) == 0) {
+            index = i;
+            break;
+        }
+    }
+
+    bersihkanLayar();
+
+    if (index == -1) {
+        printf("=== DETAIL DATA WARGA ===\n");
+        printf("[KESALAHAN] Data warga dengan NIK '%s' tidak ditemukan.\n", nik);
+        jedaLayar();
+        return;
+    }
+
+    Penduduk p = dataWarga[index];
+
+    printf("================================= DETAIL DATA WARGA =================================\n");
+    printf("NIK              : %-16s\n", p.nik);
+    printf("Nama Lengkap     : %-40s\n", p.namaLengkap);
+    printf("Tempat/Tgl Lahir : %s, %02d-%02d-%04d\n",
+           p.tempatLahir,
+           p.tglLahir.hari,
+           p.tglLahir.bulan,
+           p.tglLahir.tahun);
+    printf("Jenis Kelamin    : %-20s\n", p.jenisKelamin);
+    printf("Alamat           : %-60s\n", p.alamat);
+    printf("RT / RW          : %02d / %02d\n", p.rt, p.rw);
+    printf("Agama            : %-20s\n", p.agama);
+    printf("Status Kawin     : %-20s\n", p.statusPerkawinan);
+    printf("Pekerjaan        : %-30s\n", p.pekerjaan);
+    printf("Status Warga     : %-20s\n", p.statusWarga);
+    printf("======================================================================================\n");
+
+    jedaLayar();
+}
+
+
+void cariWarga() {
+    char input[100];
+    int index = -1;
+    // minta input NIK atau Nama
+    printf("Masukkan NIK atau Nama Warga: ");
+    scanf("%s", input);
+    // cari data warga dengan nik atau nama
+    for (int i = 0; i < jumlahWarga; i++) {
+        if (strcmp(dataWarga[i].nik, input) == 0 || strcmp(dataWarga[i].namaLengkap, input) == 0) {
+            index = i;
+            break;
+        }
+    }
+    // tampilkan detail warga jika ditemukan
+    if (index != -1) {
+        detailWarga(dataWarga[index].nik);
+    } else {
+        printf("[KESALAHAN] Data warga tidak ditemukan.\n");
+        jedaLayar();
+    }
+}
+
+void editWarga() {
+    char nik[17];
+    int index = -1;
+    int pilihan;
+    char buffer[100]; 
+
+    bersihkanLayar();
+    printf("======================================================================================\n");
+    printf("                                  EDIT DATA WARGA                                     \n");
+    printf("======================================================================================\n");
+    printf("Masukkan NIK Warga yang ingin diedit: ");
+    scanf("%s", nik);
+
+    // 1. CARI DATA
+    for (int i = 0; i < jumlahWarga; i++) {
+        if (strcmp(dataWarga[i].nik, nik) == 0) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index == -1) {
+        printf("\n[ERROR] Data warga dengan NIK '%s' tidak ditemukan.\n", nik);
+        jedaLayar();
+        return;
+    }
+
+    // 2. TAMPILKAN DATA SAAT INI (PREVIEW)
+    Penduduk *p = &dataWarga[index]; 
+
+    printf("\n--- DATA SAAT INI ---\n");
+    printf("1. Nama Lengkap  : %s\n", p->namaLengkap);
+    printf("2. TTL           : %s, %02d-%02d-%d\n", p->tempatLahir, p->tglLahir.hari, p->tglLahir.bulan, p->tglLahir.tahun);
+    printf("3. Alamat Lengkap: %s, RT %03d / RW %03d\n", p->alamat, p->rt, p->rw);
+    printf("4. Agama         : %s\n", p->agama);
+    printf("5. Pekerjaan     : %s\n", p->pekerjaan);
+    printf("6. Status Kawin  : %s\n", p->statusPerkawinan);
+    printf("7. Status Warga  : %s\n", p->statusWarga);
+    printf("--------------------------------------------------------------------------------------\n");
+    printf("[INFO] NIK tidak dapat diubah demi keamanan data.\n");
+    printf("--------------------------------------------------------------------------------------\n");
+
+    // 3. MENU PILIHAN
+    printf("\nBagian mana yang ingin diubah? [1-7] atau [0] Batal: ");
+    scanf("%d", &pilihan);
+
+    if (pilihan == 0) {
+        printf("\n[INFO] Edit dibatalkan.\n");
+        jedaLayar();
+        return;
+    }
+
+    // 4. LOGIKA EDIT
+    printf("\n>> Masukkan Data Baru:\n");
+
+    switch (pilihan) {
+        case 1: // NAMA
+            printf("Nama Lengkap Baru: ");
+            scanf(" %[^\n]", p->namaLengkap);
+            break;
+
+        case 2: // TTL
+            printf("Tempat Lahir : ");
+            scanf(" %[^\n]", p->tempatLahir);
+            printf("Tanggal (DD) : "); scanf("%d", &p->tglLahir.hari);
+            printf("Bulan   (MM) : "); scanf("%d", &p->tglLahir.bulan);
+            printf("Tahun   (YYYY): "); scanf("%d", &p->tglLahir.tahun);
+            break;
+
+        case 3: // ALAMAT 
+            printf("Nama Jalan/Dusun: ");
+            scanf(" %[^\n]", p->alamat);
+            printf("RT Baru (Angka) : "); scanf("%d", &p->rt);
+            printf("RW Baru (Angka) : "); scanf("%d", &p->rw);
+            break;
+
+        case 4: // AGAMA
+            printf("Agama: ");
+            scanf(" %[^\n]", p->agama);
+            break;
+
+        case 5: // PEKERJAAN
+            printf("Pekerjaan: ");
+            scanf(" %[^\n]", p->pekerjaan);
+            break;
+
+        case 6: // STATUS PERKAWINAN 
+            printf("Status Kawin: ");
+            scanf(" %[^\n]", p->statusPerkawinan);
+            break;
+
+        case 7: // STATUS WARGA
+            printf("Status Warga (Aktif/Pindah/Meninggal): ");
+            scanf(" %[^\n]", p->statusWarga);
+            break;
+
+        default:
+            printf("\n[ERROR] Pilihan tidak valid!\n");
+            jedaLayar();
+            return;
+    }
+
+    printf("\n[SUKSES] Data berhasil diperbarui!\n");
+    
+    jedaLayar();
+}
+
+void hapusWarga() {
+    char nik[17] = "";
+    char konfirmasi;
+    int index = -1;
+
+    bersihkanLayar();
+    printf("================================= HAPUS DATA WARGA =================================\n");
+    printf("Masukkan NIK Target: ");
+    scanf("%s", nik);
+    printf("--------------------------------------------------------------------------------------\n");
+
+    // Cari data warga
+    for (int i = 0; i < jumlahWarga; i++) {
+        if (strcmp(dataWarga[i].nik, nik) == 0) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index == -1) {
+        printf("[KESALAHAN] Data warga dengan NIK '%s' tidak ditemukan.\n", nik);
+        printf("======================================================================================\n");
+        jedaLayar();
+        return;
+    }
+
+    Penduduk p = dataWarga[index];
+
+    // Tampilkan ringkasan data
+    printf("DATA WARGA DITEMUKAN\n");
+    printf("--------------------------------------------------------------------------------------\n");
+    printf("NIK          : %-16s\n", p.nik);
+    printf("Nama Lengkap : %-40s\n", p.namaLengkap);
+    printf("Alamat       : %-60s\n", p.alamat);
+    printf("Status Warga : %-20s\n", p.statusWarga);
+    printf("--------------------------------------------------------------------------------------\n");
+
+    printf("[PERINGATAN] Data yang dihapus tidak dapat dikembalikan.\n");
+    printf("Apakah Anda yakin ingin menghapus data ini? (Y/N): ");
+    scanf(" %c", &konfirmasi);
+
+    if (konfirmasi == 'Y' || konfirmasi == 'y') {
+        for (int i = index; i < jumlahWarga - 1; i++) {
+            dataWarga[i] = dataWarga[i + 1];
+        }
+
+        jumlahWarga--;
+        printf("\n[SUKSES] Data warga atas nama %-40s telah dihapus.\n", p.namaLengkap);
+    } else {
+        printf("\n[INFO] Penghapusan data dibatalkan oleh pengguna.\n");
+    }
+
+    printf("======================================================================================\n");
+    jedaLayar();
+}
+
+int cekNIKTerdaftar(char* nikCek) {
+    // untuk mengecek apakah nik sudah terdaftar atau belum
+    for (int i = 0; i < jumlahWarga; i++) {
+        if (strcmp(dataWarga[i].nik, nikCek) == 0) {
+            return 1; // Ada
+        }
+    }
+    return 0; // Tidak ada
+}
+
+void menuDataWarga() {
+    int pilihan;
+
+    do {
+        bersihkanLayar();
+        printf("================================ MENU KELOLA DATA WARGA ================================\n");
+        printf("[1] Tambah Warga Baru\n");
+        printf("[2] Lihat Daftar Warga\n");
+        printf("[3] Cari & Detail Warga\n");
+        printf("[4] Edit Data Warga\n");
+        printf("[5] Hapus Warga\n");
+        printf("[0] Kembali ke Menu Utama\n");
+        printf("--------------------------------------------------------------------------------------\n");
+        printf("Pilihan: ");
+
+        scanf("%d", &pilihan);
+
+        switch (pilihan) {
+            case 1: tambahWarga(); break;
+            case 2: lihatDaftarWarga(); break;
+            case 3: cariWarga(); break;
+            case 4: editWarga(); break;
+            case 5: hapusWarga(); break;
+            case 0:
+                printf("\n[INFO] Kembali ke menu utama...\n");
+                jedaLayar();
+                break;
+            default:
+                printf("\n[KESALAHAN] Pilihan menu tidak valid.\n");
+                jedaLayar();
+        }
+    } while (pilihan != 0);
+}
+
+
+
+==================================================
+NAMA FILE: src/file_handler.c
+==================================================
+#include <stdio.h>
+#include "../include/structs.h"
+#include "../include/file_handler.h"
+
+// ambil data variable dari file main.c 
+// extern berfungsi agar variable tidak dibuat duplikat, dan dapat digunakan di beberapa file 
+extern Penduduk dataWarga[MAX_WARGA];
+extern int jumlahWarga;
+
+extern RiwayatSurat dataSurat[MAX_SURAT];
+extern int jumlahSurat;
+
+extern Transaksi dataTransaksi[MAX_TRANSAKSI];
+extern int jumlahTransaksi;
+
+extern Mutasi dataMutasi[MAX_MUTASI];
+extern int jumlahMutasi;
+
+void muatData() {
+    FILE *file;
+
+    // 1. LOAD DATA WARGA
+    file = fopen("data/db_warga.dat", "rb"); // rb = Read Binary
+    if (file != NULL) {
+        fread(&jumlahWarga, sizeof(int), 1, file); // Baca jumlahnya dulu, lalu simpan di variable jumlah
+        fread(dataWarga, sizeof(Penduduk), jumlahWarga, file); // Baca datanya, lalu simpan di variable data
+        fclose(file);
+    }
+
+    // 2. LOAD DATA SURAT
+    file = fopen("data/db_surat.dat", "rb");
+    if (file != NULL) {
+        fread(&jumlahSurat, sizeof(int), 1, file);
+        fread(dataSurat, sizeof(RiwayatSurat), jumlahSurat, file);
+        fclose(file);
+    }
+
+    // 3. LOAD DATA KEUANGAN
+    file = fopen("data/db_keuangan.dat", "rb");
+    if (file != NULL) {
+        fread(&jumlahTransaksi, sizeof(int), 1, file);
+        fread(dataTransaksi, sizeof(Transaksi), jumlahTransaksi, file);
+        fclose(file);
+    }
+
+    // 4. LOAD DATA MUTASI
+    file = fopen("data/db_mutasi.dat", "rb");
+    if (file != NULL) {
+        fread(&jumlahMutasi, sizeof(int), 1, file);
+        fread(dataMutasi, sizeof(Mutasi), jumlahMutasi, file);
+        fclose(file);
+    }
+}
+
+// --- FUNGSI SAVE (TULIS FILE) ---
+void simpanData() {
+    FILE *file;
+
+    // 1. SIMPAN DATA WARGA
+    file = fopen("data/db_warga.dat", "wb"); // wb = Write Binary
+    if (file != NULL) {
+        fwrite(&jumlahWarga, sizeof(int), 1, file); // Simpan jumlahnya
+        fwrite(dataWarga, sizeof(Penduduk), jumlahWarga, file); // Simpan datanya
+        fclose(file);
+    }
+
+    // 2. SIMPAN DATA SURAT
+    file = fopen("data/db_surat.dat", "wb");
+    if (file != NULL) {
+        fwrite(&jumlahSurat, sizeof(int), 1, file);
+        fwrite(dataSurat, sizeof(RiwayatSurat), jumlahSurat, file);
+        fclose(file);
+    }
+
+    // 3. SIMPAN DATA KEUANGAN
+    file = fopen("data/db_keuangan.dat", "wb");
+    if (file != NULL) {
+        fwrite(&jumlahTransaksi, sizeof(int), 1, file);
+        fwrite(dataTransaksi, sizeof(Transaksi), jumlahTransaksi, file);
+        fclose(file);
+    }
+
+    // 4. SIMPAN DATA MUTASI
+    file = fopen("data/db_mutasi.dat", "wb");
+    if (file != NULL) {
+        fwrite(&jumlahMutasi, sizeof(int), 1, file);
+        fwrite(dataMutasi, sizeof(Mutasi), jumlahMutasi, file);
+        fclose(file);
+    }
+
+    printf("\n[SUKSES] Semua data berhasil disimpan ke file!\n");
+}
+
+
+
+==================================================
+NAMA FILE: src/laporan.c
+==================================================
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "../include/structs.h"
+#include "../include/utils.h"
+#include "../include/laporan.h"
+
+extern Penduduk dataWarga[MAX_WARGA];
+extern int jumlahWarga;
+extern Transaksi dataTransaksi[MAX_TRANSAKSI];
+extern int jumlahTransaksi;
+extern Mutasi dataMutasi[MAX_MUTASI];
+extern int jumlahMutasi;
+
+void statistikWarga() {
+    int laki = 0, perempuan = 0;
+    for(int i = 0; i < jumlahWarga; i++){
+        if(strcmp(dataWarga[i].jenisKelamin, "Laki-laki") == 0){
+            laki++;
+        } else if(strcmp(dataWarga[i].jenisKelamin, "Perempuan") == 0){
+            perempuan++;
+        }
+    }
+    printf("\n=== STATISTIK KEPENDUDUKAN ===\n");
+    printf("Jumlah Laki-laki: %d\n", laki);
+    printf("Jumlah Perempuan: %d\n", perempuan);
+    printf("Jumlah Penduduk: %d\n", jumlahWarga);
+    jedaLayar();
+}
+
+void rekapKeuangan() {
+    long total = 0;
+    for(int i = 0; i < jumlahTransaksi; i++){
+        total += dataTransaksi[i].nominal;
+    }
+    printf("\n=== REKAP KEUANGAN DESA ===\n");
+    printf("Total Pemasukan Desa: %ld\n", total);
+    jedaLayar();
+}
+
+void tampilkanTabelWarga() {
+    printf("\n=== DAFTAR WARGA ===\n");
+    if (jumlahWarga == 0) {
+        printf("Tidak ada data warga.\n");
+        return;
+    }
+    printf("%-16s %-20s %-10s %-15s %-5s %-5s %-10s\n", "NIK", "Nama", "Jenis Kelamin", "Alamat", "RT", "RW", "Status");
+    printf("--------------------------------------------------------------------------------\n");
+    for(int i = 0; i < jumlahWarga; i++){
+        printf("%-16s %-20s %-10s %-15s %-5d %-5d %-10s\n", 
+               dataWarga[i].nik, 
+               dataWarga[i].namaLengkap, 
+               dataWarga[i].jenisKelamin, 
+               dataWarga[i].alamat, 
+               dataWarga[i].rt, 
+               dataWarga[i].rw, 
+               dataWarga[i].statusWarga);
+    }
+}
+
+void eksporKeFile() {
+    char namaFile[100];
+    printf("Masukkan nama file untuk ekspor (tanpa ekstensi): ");
+    scanf("%s", namaFile);
+    strcat(namaFile, ".txt");
+    
+    FILE *file = fopen(namaFile, "w");
+    if (file == NULL) {
+        printf("Gagal membuka file untuk ekspor.\n");
+        jedaLayar();
+        return;
+    }
+    
+    fprintf(file, "Daftar Warga\n");
+    fprintf(file, "NIK,Nama,Jenis Kelamin,Alamat,RT,RW,Status\n");
+    for(int i = 0; i < jumlahWarga; i++){
+        fprintf(file, "%s,%s,%s,%s,%d,%d,%s\n", 
+                dataWarga[i].nik, 
+                dataWarga[i].namaLengkap, 
+                dataWarga[i].jenisKelamin, 
+                dataWarga[i].alamat, 
+                dataWarga[i].rt, 
+                dataWarga[i].rw, 
+                dataWarga[i].statusWarga);
+    }
+    fclose(file);
+    printf("Data berhasil diekspor ke file %s\n", namaFile);
+    jedaLayar();
+}
+
+void tampilkanTabelMutasi() {
+    printf("\n=== DAFTAR MUTASI PENDUDUK ===\n");
+    if (jumlahMutasi == 0) {
+        printf("Tidak ada data mutasi.\n");
+        return;
+    }
+    printf("%-20s %-17s %-15s %-10s %-15s\n", "Kode Mutasi", "NIK", "Jenis Mutasi", "Tanggal", "Alasan");
+    printf("-------------------------------------------------------------------------------\n");
+    for(int i = 0; i < jumlahMutasi; i++){
+        printf("%-20s %-17s %-15s %02d-%02d-%04d %-15s\n", 
+               dataMutasi[i].kodeMutasi, 
+               dataMutasi[i].nikTerkait, 
+               dataMutasi[i].jenisMutasi, 
+               dataMutasi[i].tglKejadian.hari, 
+               dataMutasi[i].tglKejadian.bulan, 
+               dataMutasi[i].tglKejadian.tahun, 
+               dataMutasi[i].alasan);
+    }
+}
+
+void laporanDataWarga() {
+    int pilihan;
+    do {
+        bersihkanLayar();
+        printf("=== LAPORAN DATA WARGA ===\n");
+        printf("[1] Tampilkan Semua Warga\n");
+        printf("[2] Ekspor ke File\n");
+        printf("[0] Kembali\n");
+        printf("--------------------------\n");
+        printf("Pilihan: ");
+        scanf("%d", &pilihan);
+
+        switch(pilihan) {
+            case 1: tampilkanTabelWarga(); jedaLayar(); break;
+            case 2: eksporKeFile(); break;
+            case 0: break;
+            default: printf("Salah input!\n"); jedaLayar();
+        }
+    } while (pilihan != 0);
+}
+
+void menuLaporan() {
+    int pilihan;
+    do {
+        bersihkanLayar();
+        printf("=== MENU LAPORAN & STATISTIK ===\n");
+        printf("[1] Statistik Kependudukan\n");
+        printf("[2] Rekap Keuangan Desa\n");
+        printf("[3] Laporan Data Warga\n");
+        printf("[4] Laporan Mutasi Penduduk\n");
+        printf("[0] Kembali\n");
+        printf("--------------------------------\n");
+        printf("Pilihan: ");
+        scanf("%d", &pilihan);
+
+        switch(pilihan) {
+            case 1: statistikWarga(); break;
+            case 2: rekapKeuangan(); break;
+            case 3: laporanDataWarga(); break;
+            case 4: tampilkanTabelMutasi(); jedaLayar(); break;
+            case 0: break;
+            default: printf("Salah input!\n"); jedaLayar();
+        }
+    } while (pilihan != 0);
+}
+
+
+
+==================================================
+NAMA FILE: src/layanan_surat.c
+==================================================
+#include <stdio.h>
+#include <string.h>
+#include <time.h> // untuk generate tanggal saat ini
+#include "../include/structs.h"
+#include "../include/utils.h"
+#include "../include/layanan_surat.h"
+
+extern Penduduk dataWarga[MAX_WARGA];
+extern int jumlahWarga;
+extern RiwayatSurat dataSurat[MAX_SURAT];
+extern int jumlahSurat;
+
+int cariDataPemohon(char* nik) {
+    for (int i = 0; i < jumlahWarga; i++) {
+      if (strcmp(nik, dataWarga[i].nik) == 0) {
+        return i;
+      }
+    }
+    
+    return -1; // Default gak ketemu
+}
+
+void cetakSurat(int indexWarga, char* jenisSurat, char* keperluan) {
+    FILE *fp;
+    char namaFile[120];
+
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+
+    // Nama file
+    sprintf(namaFile, "output_surat/Surat_%s_%s.txt",
+            dataWarga[indexWarga].nik, jenisSurat);
+
+    fp = fopen(namaFile, "w");
+    if (fp == NULL) {
+        printf("\n[KESALAHAN] Gagal membuat file surat.\n");
+        printf("Pastikan folder 'output_surat' sudah tersedia.\n");
+        return;
+    }
+
+    /* ===================== ISI SURAT ===================== */
+    fprintf(fp, "=====================================================================\n");
+    fprintf(fp, "                     PEMERINTAH DESA NAGRI KALER                     \n");
+    fprintf(fp, "=====================================================================\n\n");
+
+    fprintf(fp, "                              SURAT KETERANGAN                      \n");
+    fprintf(fp, "                           Jenis Surat : %s                          \n\n", jenisSurat);
+
+    fprintf(fp, "Yang bertanda tangan di bawah ini menerangkan bahwa:\n\n");
+
+    fprintf(fp, "Nama Lengkap     : %s\n", dataWarga[indexWarga].namaLengkap);
+    fprintf(fp, "NIK              : %s\n", dataWarga[indexWarga].nik);
+    fprintf(fp, "Tempat/Tgl Lahir : %s, %02d-%02d-%04d\n",
+            dataWarga[indexWarga].tempatLahir,
+            dataWarga[indexWarga].tglLahir.hari,
+            dataWarga[indexWarga].tglLahir.bulan,
+            dataWarga[indexWarga].tglLahir.tahun);
+    fprintf(fp, "Alamat           : %s\n\n", dataWarga[indexWarga].alamat);
+
+    fprintf(fp, "Adalah benar warga Desa Nagri Kaler.\n");
+    fprintf(fp, "Surat keterangan ini dibuat untuk keperluan:\n\n");
+    fprintf(fp, "    \"%s\"\n\n", keperluan);
+
+    fprintf(fp, "Demikian surat keterangan ini dibuat agar dapat digunakan sebagaimana mestinya.\n\n");
+
+    fprintf(fp, "Nagri Kaler, %02d-%02d-%04d\n\n",
+            t->tm_mday, t->tm_mon + 1, t->tm_year + 1900);
+
+    fprintf(fp, "Kepala Desa Nagri Kaler,\n\n\n");
+    fprintf(fp, "( Agus Purwanto )\n");
+
+    fclose(fp);
+
+    /* ===================== SIMPAN RIWAYAT ===================== */
+    sprintf(dataSurat[jumlahSurat].kodeSurat, "SRT-%03d", jumlahSurat + 1);
+    sprintf(dataSurat[jumlahSurat].namaFile, "Surat_%s_%s.txt",
+            dataWarga[indexWarga].nik, jenisSurat);
+
+    strcpy(dataSurat[jumlahSurat].jenisSurat, jenisSurat);
+    strcpy(dataSurat[jumlahSurat].nikPemohon, dataWarga[indexWarga].nik);
+    strcpy(dataSurat[jumlahSurat].keperluan, keperluan);
+
+    dataSurat[jumlahSurat].tglDibuat.hari  = t->tm_mday;
+    dataSurat[jumlahSurat].tglDibuat.bulan = t->tm_mon + 1;
+    dataSurat[jumlahSurat].tglDibuat.tahun = t->tm_year + 1900;
+
+    jumlahSurat++;
+
+    printf("\n[SUKSES] Surat \"%s\" berhasil dibuat.\n", jenisSurat);
+    printf("[INFO] File disimpan sebagai: %s\n", namaFile);
+}
+
+void buatSuratBaru() {
+    char nik[17] = "";
+    char jenisSurat[50] = "";
+    char keperluan[100] = "";
+    int indexWarga;
+
+    bersihkanLayar();
+    printf("================================ LAYANAN BUAT SURAT BARU ================================\n");
+    printf("Masukkan NIK Pemohon: ");
+    scanf("%s", nik);
+    printf("-----------------------------------------------------------------------------------------\n");
+
+    indexWarga = cariDataPemohon(nik);
+
+    if (indexWarga == -1) {
+        printf("[KESALAHAN] Data warga dengan NIK '%s' tidak ditemukan.\n", nik);
+        printf("=========================================================================================\n");
+        jedaLayar();
+        return;
+    }
+
+    // Preview data pemohon
+    printf("DATA PEMOHON DITEMUKAN\n");
+    printf("-----------------------------------------------------------------------------------------\n");
+    printf("NIK          : %-16s\n", dataWarga[indexWarga].nik);
+    printf("Nama Lengkap : %-40s\n", dataWarga[indexWarga].namaLengkap);
+    printf("Pekerjaan    : %-30s\n", dataWarga[indexWarga].pekerjaan);
+    printf("-----------------------------------------------------------------------------------------\n");
+
+    printf("Jenis Surat  : ");
+    scanf(" %[^\n]", jenisSurat);
+
+    printf("Keperluan    : ");
+    scanf(" %[^\n]", keperluan);
+
+    cetakSurat(indexWarga, jenisSurat, keperluan);
+
+    printf("=========================================================================================\n");
+    jedaLayar();
+}
+    
+void lihatRiwayatSurat() {
+    bersihkanLayar(); 
+
+    // Header diperpanjang agar muat
+    printf("=========================================================================================================\n");
+    printf("                                          RIWAYAT SURAT KELUAR                                           \n");
+    printf("=========================================================================================================\n");
+    printf("Total Surat Dicetak: %d\n", jumlahSurat);
+    
+    // HEADER TABEL (Total Lebar sktr 105 karakter)
+    printf("---------------------------------------------------------------------------------------------------------\n");
+    printf("| %-3s | %-10s | %-16s | %-30s | %-30s |\n", "NO", "TANGGAL", "NIK PEMOHON", "JENIS SURAT", "NAMA FILE");
+    printf("---------------------------------------------------------------------------------------------------------\n");
+
+    if (jumlahSurat == 0) {
+        // Lebar pesan kosong disesuaikan
+        printf("| %-101s |\n", "       BELUM ADA DATA SURAT YANG DIBUAT");
+    } else {
+        // LOOPING DATA
+        for (int i = 0; i < jumlahSurat; i++) {
+            // Karena nama file ada path "output_surat/", kita bisa potong sedikit saat display kalau kepanjangan
+            // Tapi untuk sekarang kita tampilkan full dulu
+            printf("| %-3d | %02d-%02d-%04d | %-16s | %-30s | %-30s |\n",
+                i + 1, 
+                dataSurat[i].tglDibuat.hari, 
+                dataSurat[i].tglDibuat.bulan,
+                dataSurat[i].tglDibuat.tahun,
+                dataSurat[i].nikPemohon,      
+                dataSurat[i].jenisSurat,       
+                dataSurat[i].namaFile // <--- Data Baru
+            );
+        }
+    }
+
+    printf("---------------------------------------------------------------------------------------------------------\n");
+    jedaLayar();
+}
+
+void menuLayananSurat() {
+    int pilihan;
+
+    do {
+        bersihkanLayar();
+        printf("=================================== MENU LAYANAN PERSURATAN ================================\n");
+        printf("[1] Buat Surat Baru\n");
+        printf("[2] Lihat Riwayat Surat\n");
+        printf("[0] Kembali ke Menu Utama\n");
+        printf("------------------------------------------------------------------------------------------------\n");
+        printf("Pilihan: ");
+        scanf("%d", &pilihan);
+
+        switch (pilihan) {
+            case 1: buatSuratBaru(); break;
+            case 2: lihatRiwayatSurat(); break;
+            case 0:
+                printf("\n[INFO] Kembali ke menu utama...\n");
+                jedaLayar();
+                break;
+            default:
+                printf("\n[KESALAHAN] Pilihan menu tidak valid.\n");
+                jedaLayar();
+        }
+    } while (pilihan != 0);
+}
+
+
+
+
+==================================================
+NAMA FILE: src/main.c
+==================================================
+#include <stdio.h>
+#include <stdlib.h>
+#include "../include/utils.h"
+#include "../include/structs.h"
+#include "../include/file_handler.h"
+#include "../include/data_warga.h"
+#include "../include/layanan_surat.h"
+#include "../include/retribusi.h"
+#include "../include/mutasi.h"
+#include "../include/laporan.h"
+
+// deklarasi penyimpanan data
+Penduduk dataWarga[MAX_WARGA];           
+RiwayatSurat dataSurat[MAX_SURAT];      
+Transaksi dataTransaksi[MAX_TRANSAKSI];  
+Mutasi dataMutasi[MAX_MUTASI];
+
+// Penghitung jumlah data
+int jumlahWarga = 0;
+int jumlahSurat = 0;
+int jumlahTransaksi = 0;
+int jumlahMutasi = 0;
+
+int main() {
+  int pilihan;
+
+  muatData();
+
+  do {
+    // bersihkan layar
+    bersihkanLayar();
+
+    printf("===================================================\n");
+    printf("   SISTEM ADMINISTRASI KEPENDUDUKAN & RETRIBUSI    \n");
+    printf("               KELURAHAN NAGRI KALER               \n");
+    printf("===================================================\n");
+    printf("MENU UTAMA:\n");
+    printf("[1] Kelola Data Warga\n");
+    printf("[2] Layanan Surat\n");
+    printf("[3] Loket Retribusi\n");
+    printf("[4] Mutasi Penduduk\n");
+    printf("[5] Laporan & Statistik\n");
+    printf("---------------------------------------------------\n");
+    printf("[0] Simpan & Keluar\n");
+    printf("===================================================\n");
+    printf("Pilihan Anda: ");
+
+    // Input Pilihan
+    scanf("%d", &pilihan);
+
+    switch (pilihan) {
+        case 1:
+            menuDataWarga();
+            break;
+        case 2:
+            menuLayananSurat();
+            break;
+        case 3:
+            menuRetribusi();
+            break;
+        case 4:
+            menuMutasi();
+            break;
+        case 5:
+            menuLaporan();
+            break;
+        case 0:
+            printf("\n[INFO] Sedang menyimpan data... Jangan matikan laptop!\n");
+            simpanData(); // <--- simpan data sebelum program berakhir 
+            printf("[INFO] Terima kasih! Sampai jumpa.\n");
+            break;
+        default:
+            printf("\n[ERROR] Pilihan tidak valid! Masukkan angka 0-5.\n");
+            jedaLayar();
+   }
+  } while (pilihan != 0);
+
+  return 0;
+}
+
+
+
+==================================================
+NAMA FILE: src/mutasi.c
+==================================================
+#include <stdio.h>
+#include <string.h>
+#include "../include/structs.h"
+#include "../include/utils.h"
+#include "../include/mutasi.h"
+
+extern Penduduk dataWarga[MAX_WARGA];
+extern int jumlahWarga;
+extern Mutasi dataMutasi[MAX_MUTASI];
+extern int jumlahMutasi;
+
+// Helper: Cek apakah NIK sudah dipakai
+int cekNIKDuplikat(char* nik) {
+    for (int i = 0; i < jumlahWarga; i++) {
+        if (strcmp(dataWarga[i].nik, nik) == 0) return 1;
+    }
+    return 0;
+}
+
+// 1. WARGA PINDAH DATANG (MASUK)
+void pindahDatang() { 
+    if (jumlahWarga >= MAX_WARGA || jumlahMutasi >= MAX_MUTASI) {
+        printf("[ERROR] Memori penuh! Tidak bisa menambah data.\n");
+        jedaLayar();
+        return;
+    }
+
+    Penduduk p;
+    Mutasi m;
+
+    bersihkanLayar();
+    printf("=== INPUT WARGA PINDAH DATANG ===\n");
+
+    // A. DATA MUTASI
+    printf("Tanggal Pindah (DD MM YYYY): ");
+    scanf("%d %d %d", &m.tglKejadian.hari, &m.tglKejadian.bulan, &m.tglKejadian.tahun);
+    
+    // B. DATA WARGA
+    printf("Masukan NIK : ");
+    scanf("%s", p.nik);
+
+    // Validasi 16 Digit
+    if (strlen(p.nik) != 16) {
+        printf("[KESALAHAN] NIK harus 16 digit!\n");
+        jedaLayar();
+        return;
+    }
+
+    // Validasi Duplikat 
+    if (cekNIKDuplikat(p.nik)) {
+        printf("[KESALAHAN] NIK sudah terdaftar!\n");
+        jedaLayar();
+        return;
+    }
+
+    printf("Masukan Nama Lengkap : ");
+    scanf(" %[^\n]", p.namaLengkap);
+
+    printf("Tempat Lahir : ");
+    scanf(" %[^\n]", p.tempatLahir);
+
+    printf("Tanggal Lahir (DD MM YYYY) : ");
+    scanf("%d %d %d", &p.tglLahir.hari, &p.tglLahir.bulan, &p.tglLahir.tahun);
+
+    printf("Jenis Kelamin (L/P) : ");
+    scanf(" %[^\n]", p.jenisKelamin);
+
+    printf("Alamat : ");
+    scanf(" %[^\n]", p.alamat);
+
+    printf("RT / RW (pisahkan spasi) : ");
+    scanf("%d %d", &p.rt, &p.rw);
+
+    printf("Agama : ");
+    scanf(" %[^\n]", p.agama);
+
+    printf("Pekerjaan : ");
+    scanf(" %[^\n]", p.pekerjaan);
+
+    printf("Status Kawin : ");
+    scanf(" %[^\n]", p.statusPerkawinan); 
+
+    // Set status default
+    strcpy(p.statusWarga, "Aktif");
+
+    // Simpan ke Array Warga
+    dataWarga[jumlahWarga] = p;
+    jumlahWarga++;
+
+    sprintf(m.kodeMutasi, "M%03d", jumlahMutasi + 1); 
+    
+    strcpy(dataMutasi[jumlahMutasi].nikTerkait, p.nik);
+    strcpy(dataMutasi[jumlahMutasi].jenisMutasi, "Pindah Datang");
+    strcpy(dataMutasi[jumlahMutasi].alasan, "Warga Pindah Datang");
+    dataMutasi[jumlahMutasi].tglKejadian = m.tglKejadian;
+    
+    jumlahMutasi++;
+
+    printf("\n[SUKSES] Warga baru berhasil ditambahkan.\n");
+    jedaLayar();
+}
+
+// 2. WARGA PINDAH KELUAR
+void pindahKeluar() {
+    if (jumlahMutasi >= MAX_MUTASI) {
+        printf("[ERROR] Memori Mutasi Penuh.\n");
+        jedaLayar();
+        return;
+    }
+
+    char nikTerkait[17];
+    int index = -1;
+
+    bersihkanLayar();
+    printf("=== INPUT PINDAH KELUAR ===\n");
+    printf("Masukan NIK : ");
+    scanf("%s", nikTerkait);
+
+    // Cari NIK
+    for (int i = 0; i < jumlahWarga; i++) {
+        if (strcmp(dataWarga[i].nik, nikTerkait) == 0) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index == -1) {
+        printf("[KESALAHAN] NIK tidak ditemukan.\n");
+    } else {
+        printf("Ditemukan: %s\n", dataWarga[index].namaLengkap);
+        
+        // Update Status Warga
+        strcpy(dataWarga[index].statusWarga, "Pindah");
+
+        // Catat Log Mutasi
+        strcpy(dataMutasi[jumlahMutasi].nikTerkait, nikTerkait);
+        strcpy(dataMutasi[jumlahMutasi].jenisMutasi, "Pindah Keluar");
+
+        printf("Tanggal Pindah (DD MM YYYY) : ");
+        scanf("%d %d %d", &dataMutasi[jumlahMutasi].tglKejadian.hari, &dataMutasi[jumlahMutasi].tglKejadian.bulan, &dataMutasi[jumlahMutasi].tglKejadian.tahun);
+
+        printf("Alasan Pindah : ");
+        scanf(" %[^\n]", dataMutasi[jumlahMutasi].alasan);
+
+        printf("Alamat Tujuan Baru : ");
+        scanf(" %[^\n]", dataMutasi[jumlahMutasi].alamatBaru);
+
+        jumlahMutasi++;
+        printf("\n[SUKSES] Data pindah keluar berhasil dicatat.\n");
+    }
+
+    jedaLayar();
+}
+
+// 3. LAPOR KEMATIAN
+void laporKematian() {
+    if (jumlahMutasi >= MAX_MUTASI) {
+        printf("[ERROR] Memori Mutasi Penuh.\n");
+        jedaLayar();
+        return;
+    }
+
+    char nikTerkait[17];
+    int index = -1;
+
+    bersihkanLayar();
+    printf("=== LAPOR KEMATIAN ===\n");
+    printf("Masukan NIK : ");
+    scanf("%s", nikTerkait);
+
+    for (int i = 0; i < jumlahWarga; i++) {
+        if (strcmp(dataWarga[i].nik, nikTerkait) == 0) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index == -1) {
+        printf("[KESALAHAN] NIK tidak ditemukan.\n");
+    } else {
+        printf("Ditemukan: %s\n", dataWarga[index].namaLengkap);
+
+        // Update Status
+        strcpy(dataWarga[index].statusWarga, "Meninggal");
+
+        // Catat Log
+        strcpy(dataMutasi[jumlahMutasi].nikTerkait, nikTerkait);
+        strcpy(dataMutasi[jumlahMutasi].jenisMutasi, "Kematian");
+        strcpy(dataMutasi[jumlahMutasi].alasan, "Meninggal Dunia");
+
+        printf("Tanggal Kematian (DD MM YYYY): ");
+        scanf("%d %d %d", &dataMutasi[jumlahMutasi].tglKejadian.hari,
+                          &dataMutasi[jumlahMutasi].tglKejadian.bulan,
+                          &dataMutasi[jumlahMutasi].tglKejadian.tahun);
+
+        jumlahMutasi++;
+        printf("\n[SUKSES] Data kematian berhasil dicatat.\n");
+    }
+
+    jedaLayar();
+}
+
+// 4. LIHAT LOG (FORMAT TABEL)
+void lihatLogMutasi() {
+    bersihkanLayar();
+    printf("=== LOG MUTASI ===\n");
+
+    if (jumlahMutasi == 0) {
+        printf("Belum ada data mutasi.\n");
+    } else {
+        // Header simpel
+        printf("%-3s | %-16s | %-15s | %-12s | %s\n", "NO", "NIK", "JENIS", "TANGGAL", "ALASAN");
+        printf("----------------------------------------------------------------------\n");
+        
+        for (int i = 0; i < jumlahMutasi; i++) {
+            printf("%-3d | %-16s | %-15s | %02d-%02d-%04d | %s\n",
+                i + 1,
+                dataMutasi[i].nikTerkait,
+                dataMutasi[i].jenisMutasi,
+                dataMutasi[i].tglKejadian.hari,
+                dataMutasi[i].tglKejadian.bulan,
+                dataMutasi[i].tglKejadian.tahun,
+                dataMutasi[i].alasan
+            );
+        }
+    }
+    jedaLayar();
+}
+
+void menuMutasi() {
+    int pilihan;
+    do {
+        bersihkanLayar();
+        printf("=== MENU MUTASI PENDUDUK ===\n");
+        printf("[1] Warga Pindah Datang\n");
+        printf("[2] Warga Pindah Keluar\n");
+        printf("[3] Lapor Kematian\n");
+        printf("[4] Lihat Log Mutasi\n");
+        printf("[0] Kembali\n");
+        printf("Pilihan: ");
+        scanf("%d", &pilihan);
+
+        switch(pilihan) {
+            case 1: pindahDatang(); break;
+            case 2: pindahKeluar(); break;
+            case 3: laporKematian(); break;
+            case 4: lihatLogMutasi(); break;
+            case 0: break;
+            default: printf("Salah input!\n"); jedaLayar();
+        }
+    } while (pilihan != 0);
+}
+
+
+
+==================================================
+NAMA FILE: src/retribusi.c
+==================================================
+
+#include <stdio.h>
+#include <string.h>
+#include "../include/structs.h"
+#include "../include/utils.h"
+#include "../include/retribusi.h"
+
+extern Penduduk dataWarga[MAX_WARGA];
+extern int jumlahWarga;
+extern Transaksi dataTransaksi[MAX_TRANSAKSI];
+extern int jumlahTransaksi;
+
+/* 
+   BAYAR RETRIBUSI
+*/
+void bayarRetribusi() {
+    char nikCari[20];
+    int ditemukan = -1;
+
+    // Cegah overflow array
+    if (jumlahTransaksi >= MAX_TRANSAKSI) {
+        printf("Data transaksi sudah penuh!\n");
+        jedaLayar();
+        return;
+    }
+
+    printf("\n=== BAYAR RETRIBUSI ===\n");
+    printf("Masukkan NIK: ");
+    scanf("%19s", nikCari);
+
+    // Cari warga
+    for (int i = 0; i < jumlahWarga; i++) {
+        if (strcmp(dataWarga[i].nik, nikCari) == 0) {
+            ditemukan = i;
+            break;
+        }
+    }
+
+    if (ditemukan == -1) {
+        printf("Warga tidak ditemukan.\n");
+        jedaLayar();
+        return;
+    }
+
+    // Cegah pembayaran ganda
+    for (int i = 0; i < jumlahTransaksi; i++) {
+        if (strcmp(dataTransaksi[i].nikPembayar, nikCari) == 0) {
+            printf("Warga ini sudah membayar retribusi.\n");
+            jedaLayar();
+            return;
+        }
+    }
+
+    // Simpan transaksi
+    strcpy(dataTransaksi[jumlahTransaksi].nikPembayar, nikCari);
+
+    printf("Jenis Retribusi (Kebersihan/Keamanan): ");
+    scanf("%19s", dataTransaksi[jumlahTransaksi].jenisRetribusi);
+
+    printf("Nominal: ");
+    scanf("%d", &dataTransaksi[jumlahTransaksi].nominal);
+
+    if (dataTransaksi[jumlahTransaksi].nominal <= 0) {
+        printf("Nominal tidak valid.\n");
+        jedaLayar();
+        return;
+    }
+
+    jumlahTransaksi++;
+
+    printf("Pembayaran berhasil dicatat.\n");
+    jedaLayar();
+}
+
+/* 
+   LAPORAN TUNGGAKAN
+  */
+void laporanTunggakan() {
+    Penduduk penunggak[MAX_WARGA];
+    int jumlahPenunggak = 0;
+    int sudahBayar;
+
+    // Bandingkan data warga vs transaksi
+    for (int i = 0; i < jumlahWarga; i++) {
+        sudahBayar = 0;
+        for (int j = 0; j < jumlahTransaksi; j++) {
+            if (strcmp(dataWarga[i].nik, dataTransaksi[j].nikPembayar) == 0) {
+                sudahBayar = 1;
+                break;
+            }
+        }
+        if (!sudahBayar) {
+            penunggak[jumlahPenunggak++] = dataWarga[i];
+        }
+    }
+
+    // Bubble Sort O(n^2) berdasarkan nama (A-Z)
+    Penduduk temp;
+    for (int i = 0; i < jumlahPenunggak - 1; i++) {
+        for (int j = 0; j < jumlahPenunggak - i - 1; j++) {
+            if (strcmp(penunggak[j].namaLengkap, penunggak[j + 1].namaLengkap) > 0) {
+                temp = penunggak[j];
+                penunggak[j] = penunggak[j + 1];
+                penunggak[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("\n=== DAFTAR PENUNGGAK RETRIBUSI ===\n");
+    printf("%-16s %-15s %s\n", "NIK", "Nama", "RT");
+
+    for (int i = 0; i < jumlahPenunggak; i++) {
+        printf("%-16s %-15s %d\n",
+               penunggak[i].nik,
+               penunggak[i].namaLengkap,
+               penunggak[i].rt);
+    }
+
+    if (jumlahPenunggak == 0) {
+        printf("Tidak ada penunggak.\n");
+    }
+
+    jedaLayar();
+}
+
+/* 
+   RIWAYAT TRANSAKSI
+  */
+void riwayatTransaksi() {
+    int total = 0;
+
+    printf("\n=== RIWAYAT TRANSAKSI RETRIBUSI ===\n");
+    printf("%-3s %-16s %-12s %s\n", "No", "NIK", "Jenis", "Nominal");
+
+    for (int i = 0; i < jumlahTransaksi; i++) {
+        printf("%-3d %-16s %-12s %d\n",
+               i + 1,
+               dataTransaksi[i].nikPembayar,
+               dataTransaksi[i].jenisRetribusi,
+               dataTransaksi[i].nominal);
+        total += dataTransaksi[i].nominal;
+    }
+
+    printf("----------------------------------\n");
+    printf("Total Uang Masuk: %d\n", total);
+
+    jedaLayar();
+}
+
+/*  
+   MENU RETRIBUSI
+  */
+void menuRetribusi() {
+    int pilihan;
+    do {
+        bersihkanLayar();
+        printf("=== LOKET RETRIBUSI ===\n");
+        printf("[1] Bayar Retribusi\n");
+        printf("[2] Cek Penunggak\n");
+        printf("[3] Riwayat Transaksi Masuk\n");
+        printf("[0] Kembali\n");
+        printf("Pilihan: ");
+        scanf("%d", &pilihan);
+
+        switch(pilihan) {
+            case 1: bayarRetribusi(); break;
+            case 2: laporanTunggakan(); break;
+            case 3: riwayatTransaksi(); break;
+            case 0: break;
+            default:
+                printf("Salah input!\n");
+                jedaLayar();
+        }
+    } while (pilihan != 0);
+}
+
+
+
