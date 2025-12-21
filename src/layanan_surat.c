@@ -67,7 +67,7 @@ void cetakSurat(int indexWarga, char* jenisSurat, char* keperluan) {
             t->tm_mday, t->tm_mon + 1, t->tm_year + 1900);
 
     fprintf(fp, "Kepala Desa Nagri Kaler,\n\n\n");
-    fprintf(fp, "( _________________________ )\n");
+    fprintf(fp, "( Agus Purwanto )\n");
 
     fclose(fp);
 

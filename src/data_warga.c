@@ -9,13 +9,7 @@ extern Penduduk dataWarga[MAX_WARGA];
 extern int jumlahWarga;
 
 void tambahWarga() {
-// TODO: Tugas 
-    // 1. Cek apakah database penuh?
-    // 2. Input NIK, Nama, dll.
-    // 3. Validasi NIK (panggil fungsi cekNIKTerdaftar)
-    // 4. Simpan ke array dataWarga
-    
-    Penduduk p;
+   Penduduk p;
 
     // 1. Cek apakah database penuh
     if (jumlahWarga >= MAX_WARGA) {
@@ -33,7 +27,7 @@ void tambahWarga() {
 
     // 3. Validasi NIK
     char str[16];
-    sprintf(str[16], "%d", p.nik);
+    sprintf(str, "%s", p.nik);
     int count = strlen(str);
 
     if (cekNIKTerdaftar(p.nik)) {
@@ -80,8 +74,8 @@ void tambahWarga() {
     printf("Pekerjaan           : ");
     scanf(" %[^\n]", p.pekerjaan);
 
-    printf("Status Warga        : ");
-    scanf(" %[^\n]", p.statusWarga);
+    // warga otomatis aktif
+    strcpy(p.statusWarga, "Aktif");
 
     // 4. Simpan ke array
     dataWarga[jumlahWarga] = p;
@@ -123,8 +117,6 @@ void lihatDaftarWarga() {
 }
 
 void detailWarga(char* nik) {
-    // TODO: Tugas
-    // Cari index warga berdasarkan NIK
     int index = -1;
 
     // Cari index warga berdasarkan NIK
@@ -168,8 +160,6 @@ void detailWarga(char* nik) {
 
 
 void cariWarga() {
-    // TODO: Tugas
-
     char input[100];
     int index = -1;
     // minta input NIK atau Nama
@@ -195,15 +185,16 @@ void editWarga() {
     char nik[17];
     int index = -1;
     int pilihan;
-    char buffer[100];
+    char buffer[100]; 
 
     bersihkanLayar();
-    printf("================================= EDIT DATA WARGA ===================================\n");
-    printf("Masukkan NIK Warga: ");
+    printf("======================================================================================\n");
+    printf("                                  EDIT DATA WARGA                                     \n");
+    printf("======================================================================================\n");
+    printf("Masukkan NIK Warga yang ingin diedit: ");
     scanf("%s", nik);
-    printf("--------------------------------------------------------------------------------------\n");
 
-    // Cari data
+    // 1. CARI DATA
     for (int i = 0; i < jumlahWarga; i++) {
         if (strcmp(dataWarga[i].nik, nik) == 0) {
             index = i;
@@ -212,59 +203,88 @@ void editWarga() {
     }
 
     if (index == -1) {
-        printf("[KESALAHAN] Data warga dengan NIK '%s' tidak ditemukan.\n", nik);
-        printf("======================================================================================\n");
+        printf("\n[ERROR] Data warga dengan NIK '%s' tidak ditemukan.\n", nik);
         jedaLayar();
         return;
     }
 
-    // Preview data
-    printf("DATA WARGA DITEMUKAN\n");
+    // 2. TAMPILKAN DATA SAAT INI (PREVIEW)
+    Penduduk *p = &dataWarga[index]; 
+
+    printf("\n--- DATA SAAT INI ---\n");
+    printf("1. Nama Lengkap  : %s\n", p->namaLengkap);
+    printf("2. TTL           : %s, %02d-%02d-%d\n", p->tempatLahir, p->tglLahir.hari, p->tglLahir.bulan, p->tglLahir.tahun);
+    printf("3. Alamat Lengkap: %s, RT %03d / RW %03d\n", p->alamat, p->rt, p->rw);
+    printf("4. Agama         : %s\n", p->agama);
+    printf("5. Pekerjaan     : %s\n", p->pekerjaan);
+    printf("6. Status Kawin  : %s\n", p->statusPerkawinan);
+    printf("7. Status Warga  : %s\n", p->statusWarga);
     printf("--------------------------------------------------------------------------------------\n");
-    printf("NIK          : %-16s\n", dataWarga[index].nik);
-    printf("Nama Lengkap : %-40s\n", dataWarga[index].namaLengkap);
-    printf("Alamat       : %-60s\n", dataWarga[index].alamat);
-    printf("Status Warga : %-20s\n", dataWarga[index].statusWarga);
+    printf("[INFO] NIK tidak dapat diubah demi keamanan data.\n");
     printf("--------------------------------------------------------------------------------------\n");
 
-    // Menu edit
-    printf("PILIH KOLOM YANG INGIN DIEDIT\n");
-    printf("[1] Nama Lengkap\n");
-    printf("[2] Alamat\n");
-    printf("[3] Status Warga\n");
-    printf("[0] Batal\n");
-    printf("Pilihan: ");
+    // 3. MENU PILIHAN
+    printf("\nBagian mana yang ingin diubah? [1-7] atau [0] Batal: ");
     scanf("%d", &pilihan);
 
     if (pilihan == 0) {
-        printf("\n[INFO] Edit data dibatalkan.\n");
-        printf("======================================================================================\n");
+        printf("\n[INFO] Edit dibatalkan.\n");
         jedaLayar();
         return;
     }
 
-    printf("Masukkan nilai baru: ");
-    scanf(" %[^\n]", buffer);
+    // 4. LOGIKA EDIT
+    printf("\n>> Masukkan Data Baru:\n");
 
     switch (pilihan) {
-        case 1:
-            strcpy(dataWarga[index].namaLengkap, buffer);
+        case 1: // NAMA
+            printf("Nama Lengkap Baru: ");
+            scanf(" %[^\n]", p->namaLengkap);
             break;
-        case 2:
-            strcpy(dataWarga[index].alamat, buffer);
+
+        case 2: // TTL
+            printf("Tempat Lahir : ");
+            scanf(" %[^\n]", p->tempatLahir);
+            printf("Tanggal (DD) : "); scanf("%d", &p->tglLahir.hari);
+            printf("Bulan   (MM) : "); scanf("%d", &p->tglLahir.bulan);
+            printf("Tahun   (YYYY): "); scanf("%d", &p->tglLahir.tahun);
             break;
-        case 3:
-            strcpy(dataWarga[index].statusWarga, buffer);
+
+        case 3: // ALAMAT 
+            printf("Nama Jalan/Dusun: ");
+            scanf(" %[^\n]", p->alamat);
+            printf("RT Baru (Angka) : "); scanf("%d", &p->rt);
+            printf("RW Baru (Angka) : "); scanf("%d", &p->rw);
             break;
+
+        case 4: // AGAMA
+            printf("Agama: ");
+            scanf(" %[^\n]", p->agama);
+            break;
+
+        case 5: // PEKERJAAN
+            printf("Pekerjaan: ");
+            scanf(" %[^\n]", p->pekerjaan);
+            break;
+
+        case 6: // STATUS PERKAWINAN 
+            printf("Status Kawin: ");
+            scanf(" %[^\n]", p->statusPerkawinan);
+            break;
+
+        case 7: // STATUS WARGA
+            printf("Status Warga (Aktif/Pindah/Meninggal): ");
+            scanf(" %[^\n]", p->statusWarga);
+            break;
+
         default:
-            printf("\n[KESALAHAN] Pilihan tidak valid.\n");
-            printf("======================================================================================\n");
+            printf("\n[ERROR] Pilihan tidak valid!\n");
             jedaLayar();
             return;
     }
 
-    printf("\n[SUKSES] Data warga berhasil diperbarui.\n");
-    printf("======================================================================================\n");
+    printf("\n[SUKSES] Data berhasil diperbarui!\n");
+    
     jedaLayar();
 }
 

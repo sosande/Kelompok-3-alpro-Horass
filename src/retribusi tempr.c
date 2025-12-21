@@ -1,23 +1,23 @@
-#include <stdio.h>
-#include <string.h>
-#include "../include/structs.h"
-#include "../include/utils.h"
-#include "../include/retribusi.h"
+//#include <stdio.h>
+//#include <string.h>
+//#include "../include/structs.h"
+//#include "../include/utils.h"
+//#include "../include/retribusi.h"
 
-extern Penduduk dataWarga[MAX_WARGA];
-extern int jumlahWarga;
-extern Transaksi dataTransaksi[MAX_TRANSAKSI];
-extern int jumlahTransaksi;
+//extern Penduduk dataWarga[MAX_WARGA];
+//extern int jumlahWarga;
+//extern Transaksi dataTransaksi[MAX_TRANSAKSI];
+////extern int jumlahTransaksi;
 
-void bayarRetribusi() {
+//void bayarRetribusi() {
     // TODO: Tugas
     // 1. Cari NIK pembayar
     // 2. Input Jenis (Kebersihan/Keamanan) & Nominal
     // 3. Simpan ke array dataTransaksi
     
-    printf("\n[DEV] Fitur Bayar Retribusi belum diisi.\n");
-    jedaLayar();
-}
+//    printf("\n[DEV] Fitur Bayar Retribusi belum diisi.\n");
+  //  jedaLayar();
+/*}
 
 void laporanTunggakan() {
     // TODO: Tugas 
@@ -58,4 +58,4 @@ void menuRetribusi() {
             default: printf("Salah input!\n"); jedaLayar();
         }
     } while (pilihan != 0);
-}
+} */
