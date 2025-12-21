@@ -116,6 +116,7 @@ void laporanDataWarga() {
         printf("[1] Tampilkan Semua Warga\n");
         printf("[2] Ekspor ke File\n");
         printf("[0] Kembali\n");
+        printf("--------------------------\n");
         printf("Pilihan: ");
         scanf("%d", &pilihan);
 
