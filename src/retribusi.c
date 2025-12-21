@@ -74,7 +74,6 @@ void bayarRetribusi() {
 
 /* 
    LAPORAN TUNGGAKAN
-   Asumsi: Berlaku untuk satu periode aktif
   */
 void laporanTunggakan() {
     Penduduk penunggak[MAX_WARGA];
