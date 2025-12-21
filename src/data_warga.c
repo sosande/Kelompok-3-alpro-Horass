@@ -23,23 +23,23 @@ void tambahWarga() {
 
     // 2. Input NIK
     printf("NIK (16 digit): ");
-    scanf("%s", p.nik);
+    scanf("%16s", p.nik);
 
     // 3. Validasi NIK
-    char str[16];
-    sprintf(str, "%s", p.nik);
-    int count = strlen(str);
+    int count = strlen(p.nik);
+
+    if (count != 16) {
+        printf("[KESALAHAN] NIK harus 16 digit.\n");
+        jedaLayar();
+        return;
+    }
 
     if (cekNIKTerdaftar(p.nik)) {
         printf("[KESALAHAN] NIK sudah terdaftar.\n");
         jedaLayar();
         return;
-    } else if (count != 16) {
-        printf("[KESALAHAN] NIK harus 16 digit");
-        jedaLayar();
-        return;
     }
-
+    
     // Input data lainnya
     printf("Nama Lengkap        : ");
     scanf(" %[^\n]", p.namaLengkap);
